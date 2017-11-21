@@ -12,7 +12,10 @@ TESTS := $(SOURCES:.cpp=.test)
 
 %.test: %.cpp
 	@ $(CXX) $(CXXFLAGS) -o $@ $<
-	@ $@
 
 .PHONY: test
 test: $(TESTS)
+	@ for test in $(TESTS); do \
+		$$test; \
+		echo; \
+	done
