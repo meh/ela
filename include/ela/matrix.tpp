@@ -14,11 +14,16 @@
 #include <cmath>
 #include <initializer_list>
 
-namespace meh {
+namespace ela {
 	template <size_t Columns, size_t Rows, typename Type>
-	matrix<Columns, Rows, Type>::matrix (Type value) noexcept
+	matrix<Columns, Rows, Type>::matrix () noexcept
+	{ }
+
+	template <size_t Columns, size_t Rows, typename Type>
+	template <size_t C, size_t R>
+	matrix<Columns, Rows, Type>::matrix (Type value, typename std::enable_if<C == R>::type* _dummy) noexcept
 	{
-		for (size_t i = 0; i < Rows && i < Columns; i++) {
+		for (size_t i = 0; i < Rows; i++) {
 			_buffer[i * Rows + i] = value;
 		}
 	}
@@ -39,6 +44,13 @@ namespace meh {
 	matrix<Columns, Rows, Type>::matrix (const Type* buffer) noexcept
 	{
 		*this = buffer;
+	}
+
+	template <size_t Columns, size_t Rows, typename Type>
+	void
+	matrix<Columns, Rows, Type>::force (matrix<Columns, Rows, Type>& out) const noexcept
+	{
+		out = *this;
 	}
 
 	template <size_t Columns, size_t Rows, typename Type>
@@ -108,5 +120,35 @@ namespace meh {
 	matrix<Columns, Rows, Type>::operator () (size_t column) noexcept
 	{
 		return _buffer[column];
+	}
+
+	template <size_t Columns, size_t Rows, typename Type>
+	template <size_t RightColumns, size_t RightRows>
+	expr::mul<
+		matrix<Columns, Rows, Type>,
+		matrix<RightColumns, RightRows, Type>,
+		matrix<RightColumns, Rows, Type>
+	>
+	matrix<Columns, Rows, Type>::operator * (matrix<RightColumns, RightRows, Type> const& other) const
+	{
+		return expr::mul<
+			matrix<Columns, Rows, Type>,
+			matrix<RightColumns, RightRows, Type>,
+			matrix<RightColumns, Rows, Type>
+		>(*this, other);
+	}
+
+	template <size_t Columns, size_t Rows, typename Type>
+	Type*
+	matrix<Columns, Rows, Type>::operator & (void)
+	{
+		return _buffer;
+	}
+
+	template <size_t Columns, size_t Rows, typename Type>
+	Type const*
+	matrix<Columns, Rows, Type>::operator & (void) const
+	{
+		return _buffer;
 	}
 }
