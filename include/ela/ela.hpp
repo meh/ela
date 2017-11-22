@@ -13,8 +13,8 @@
 #include "config.hpp"
 #include "forward.hpp"
 
-#include "matrix.hpp"
-#include "view.hpp"
-
 #include "expression.hpp"
 #include "expr/mul.hpp"
+
+#include "matrix.hpp"
+#include "view.hpp"

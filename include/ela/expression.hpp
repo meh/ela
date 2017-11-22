@@ -1,55 +1,62 @@
+// Copyright (c) 2017 1aim GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
 #ifndef _ELA_EXPRESSION_H
 #define _ELA_EXPRESSION_H
 
-#include <optional.hpp>
-using std::experimental::optional;
-
 namespace ela {
-	template <typename Output>
+	/* Base expression type.
+	 */
 	class expression
-	{
-	public:
-		typedef Output output;
-		typedef typename Output::type type;
-	};
+	{ };
 
-	template <typename Input, typename Output>
-	class unary_expression: public expression<Output>
+	/* Unary expressions.
+	 */
+	template <typename Input>
+	class unary_expression: public expression
 	{
-		static_assert(std::is_same<typename Input::type, typename Output::type>::value,
-			"type mismatch");
-
 	public:
 		typedef Input input;
 
 	protected:
 		unary_expression (Input const& input) noexcept
-			: _input(input);
+			: _input(input)
+		{ }
 
 	protected:
 		Input const& _input;
 	};
 
-	template <typename Left, typename Right, typename Output>
-	class binary_expression: public expression<Output>
+	/* Binary expressions.
+	 */
+	template <typename Left, typename Right>
+	class binary_expression: public expression
 	{
 		static_assert(std::is_same<typename Left::type, typename Right::type>::value,
 			"type mismatch");
 
-		static_assert(std::is_same<typename Output::type, typename Right::type>::value,
-			"type mismatch");
-
 	public:
+		typedef typename Left::type type;
 		typedef Left  left;
 		typedef Right right;
 
 	protected:
-		binary_expression (Left const& lhs, Right const& rhs) noexcept
-			: _lhs(lhs), _rhs(rhs);
+		binary_expression (Left const& left, Right const& right) noexcept
+			: _left(left), _right(right)
+		{ }
 
 	protected:
-		Left const&  _lhs;
-		Right const& _rhs;
+		Left const&  _left;
+		Right const& _right;
 	};
 }
 

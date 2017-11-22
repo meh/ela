@@ -13,27 +13,32 @@
 #ifndef _ELA_EXPR_MUL_H
 #define _ELA_EXPR_MUL_H
 
-#include "../expression.hpp"
-
 namespace ela { namespace expr {
-	template <typename Left, typename Right, typename Output>
-	class mul : public binary_expression<Left, Right, Output>
+	template <typename Left, typename Right>
+	class mul : public binary_expression<Left, Right>
 	{
 		static_assert(Left::columns == Right::rows,
 			"rows and columns don't match");
 
 	public:
-		static constexpr size_t columns = Output::columns;
-		static constexpr size_t rows = Output::rows;
+		static constexpr size_t columns = Right::columns;
+		static constexpr size_t rows = Left::rows;
 
 	public:
-		mul (Left const& lhs, Right const& rhs) noexcept
-			: binary_expression<Left, Right, Output>(lhs, rhs);
+		mul (Left const& left, Right const& right) noexcept
+			: binary_expression<Left, Right>(left, right)
+		{ }
 
-		typename type
-		operator (size_t row, size_t column) noexcept
+		typename binary_expression<Left, Right>::type
+		operator () (size_t row, size_t column) const noexcept
 		{
+			typename binary_expression<Left, Right>::type scalar = 0;
 
+			for (size_t i = 0; i < Left::columns; i++) {
+				scalar += this->_left(row, i) * this->_right(i, column);
+			}
+
+			return scalar;
 		}
 	};
 } }

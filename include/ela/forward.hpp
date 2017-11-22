@@ -11,16 +11,12 @@
 // all copies or substantial portions of the Software.
 
 namespace ela {
-	template <typename Output>
-	class concrete_expression;
-
-	template <typename Output>
 	class expression;
 
-	template <typename Input, typename Output>
+	template <typename Input>
 	class unary_expression;
 
-	template <typename Left, typename Right, typename Output>
+	template <typename Left, typename Right>
 	class binary_expression;
 
 	template <size_t Columns, size_t Rows, typename Type = float>
@@ -36,7 +32,7 @@ namespace ela {
 	class view;
 
 	namespace expr {
-		template <typename Left, typename Right, typename Output>
+		template <typename Left, typename Right>
 		class mul;
 	}
 }

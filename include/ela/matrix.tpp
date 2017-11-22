@@ -29,6 +29,13 @@ namespace ela {
 	}
 
 	template <size_t Columns, size_t Rows, typename Type>
+	template <typename Expr, size_t C, size_t R, typename T>
+	matrix<Columns, Rows, Type>::matrix (Expr const& expr, typename std::enable_if<C == Expr::columns && R == Expr::rows && std::is_same<T, typename Expr::type>::value>::type* _dummy) noexcept
+	{
+		*this = expr;
+	}
+
+	template <size_t Columns, size_t Rows, typename Type>
 	matrix<Columns, Rows, Type>::matrix (matrix<Columns, Rows, Type> const& from) noexcept
 	{
 		std::copy(&from, &from + Columns * Rows, _buffer);
@@ -44,13 +51,6 @@ namespace ela {
 	matrix<Columns, Rows, Type>::matrix (const Type* buffer) noexcept
 	{
 		*this = buffer;
-	}
-
-	template <size_t Columns, size_t Rows, typename Type>
-	void
-	matrix<Columns, Rows, Type>::force (matrix<Columns, Rows, Type>& out) const noexcept
-	{
-		out = *this;
 	}
 
 	template <size_t Columns, size_t Rows, typename Type>
@@ -93,6 +93,21 @@ namespace ela {
 	}
 
 	template <size_t Columns, size_t Rows, typename Type>
+	template <typename Expr, size_t C, size_t R, typename T>
+	typename std::enable_if<C == Expr::columns && R == Expr::rows && std::is_same<T, typename Expr::type>::value,
+		matrix<Columns, Rows, Type>&>::type
+	matrix<Columns, Rows, Type>::operator = (Expr const& expr) noexcept
+	{
+		for (size_t row = 0; row < Rows; row++) {
+			for (size_t column = 0; column < Columns; column++) {
+				_buffer[column * Rows + row] = expr(row, column);
+			}
+		}
+
+		return *this;
+	}
+
+	template <size_t Columns, size_t Rows, typename Type>
 	Type const&
 	matrix<Columns, Rows, Type>::operator () (size_t row, size_t column) const noexcept
 	{
@@ -124,18 +139,11 @@ namespace ela {
 
 	template <size_t Columns, size_t Rows, typename Type>
 	template <size_t RightColumns, size_t RightRows>
-	expr::mul<
-		matrix<Columns, Rows, Type>,
-		matrix<RightColumns, RightRows, Type>,
-		matrix<RightColumns, Rows, Type>
-	>
+	expr::mul<matrix<Columns, Rows, Type>, matrix<RightColumns, RightRows, Type>>
 	matrix<Columns, Rows, Type>::operator * (matrix<RightColumns, RightRows, Type> const& other) const
 	{
-		return expr::mul<
-			matrix<Columns, Rows, Type>,
-			matrix<RightColumns, RightRows, Type>,
-			matrix<RightColumns, Rows, Type>
-		>(*this, other);
+		return expr::mul<matrix<Columns, Rows, Type>, matrix<RightColumns, RightRows, Type>>
+			(*this, other);
 	}
 
 	template <size_t Columns, size_t Rows, typename Type>

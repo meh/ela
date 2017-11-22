@@ -19,7 +19,7 @@ namespace ela {
 	/* A matrix.
 	 */
 	template <size_t Columns, size_t Rows, typename Type>
-	class matrix: public expression<matrix<Columns, Rows, Type>>
+	class matrix: public expression
 	{
 	public:
 		typedef Type type;
@@ -38,6 +38,11 @@ namespace ela {
 		template <size_t C = Columns, size_t R = Rows>
 		matrix (Type value, typename std::enable_if<C == R>::type* = 0) noexcept;
 
+		/* Create a matrix from the given expression.
+		 */
+		template <typename Expr, size_t C = Columns, size_t R = Rows, typename T = Type>
+		matrix (Expr const& expr, typename std::enable_if<C == Expr::columns && R == Expr::rows && std::is_same<T, typename Expr::type>::value>::type* = 0) noexcept;
+
 		/* Create a matrix from another matrix, copying the data.
 		 */
 		matrix (matrix<Columns, Rows, Type> const& from) noexcept;
@@ -49,9 +54,6 @@ namespace ela {
 		/* Create a matrix from a pointer, copying the data.
 		 */
 		matrix (const Type* data) noexcept;
-
-		void
-		force (matrix<Columns, Rows, Type>& out) const noexcept;
 
 		/* Copy the contents of the matrix.
 		 */
@@ -67,6 +69,13 @@ namespace ela {
 		 */
 		matrix<Columns, Rows, Type>&
 		operator = (std::initializer_list<std::initializer_list<Type>> list) noexcept;
+
+		/* Copy the data from the expression.
+		 */
+		template <typename Expr, size_t C = Columns, size_t R = Rows, typename T = Type>
+		typename std::enable_if<C == Expr::columns && R == Expr::rows && std::is_same<T, typename Expr::type>::value,
+			matrix<Columns, Rows, Type>&>::type
+		operator = (Expr const& expr) noexcept;
 
 		/* Access a scalar at the given row and column.
 		 */
@@ -93,11 +102,7 @@ namespace ela {
 		/* Create a multiplication.
 		 */
 		template <size_t RightColumns, size_t RightRows>
-		expr::mul<
-			matrix<Columns, Rows, Type>,
-			matrix<RightColumns, RightRows, Type>,
-			matrix<RightColumns, Rows, Type>
-		>
+		expr::mul<matrix<Columns, Rows, Type>, matrix<RightColumns, RightRows, Type>>
 		operator * (matrix<RightColumns, RightRows, Type> const& other) const;
 
 		/* Return the wrapped raw pointer (row major).
