@@ -86,6 +86,7 @@ namespace ela {
 	/* Create a new view.
 	 */
 	template <typename Accessor, size_t Columns, size_t Rows, typename Type>
+	static inline
 	view<Accessor, Columns, Rows, Type>
 	make_view (matrix<Columns, Rows, Type> const& inner) noexcept
 	{

@@ -70,4 +70,8 @@ namespace ela {
 	};
 }
 
+#include "expr/add.hpp"
+#include "expr/sub.hpp"
+#include "expr/mul.hpp"
+
 #endif

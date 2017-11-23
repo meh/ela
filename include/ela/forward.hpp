@@ -36,6 +36,12 @@ namespace ela {
 
 	namespace expr {
 		template <typename Left, typename Right>
+		class add;
+
+		template <typename Left, typename Right>
+		class sub;
+
+		template <typename Left, typename Right>
 		class mul;
 	}
 }
