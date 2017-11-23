@@ -73,8 +73,10 @@ namespace ela {
 		/* Copy the data from the expression.
 		 */
 		template <typename Expr, size_t C = Columns, size_t R = Rows, typename T = Type>
-		typename std::enable_if<C == Expr::columns && R == Expr::rows && std::is_same<T, typename Expr::type>::value,
-			matrix<Columns, Rows, Type>&>::type
+		typename std::enable_if<C == Expr::columns &&
+		                        R == Expr::rows &&
+		                        std::is_same<T, typename Expr::type>::value,
+		matrix<Columns, Rows, Type>&>::type
 		operator = (Expr const& expr) noexcept;
 
 		/* Access a scalar at the given row and column.
