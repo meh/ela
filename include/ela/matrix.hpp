@@ -173,16 +173,6 @@ namespace ela {
 			return _buffer[column];
 		}
 
-		/* Create a multiplication expression.
-		 */
-		template <typename Right>
-		inline
-		expr::mul<matrix<Columns, Rows, Type>, Right>
-		operator * (Right const& other) const
-		{
-			return expr::mul<matrix<Columns, Rows, Type>, Right>(*this, other);
-		}
-
 		/* Create an addition expression.
 		 */
 		template <typename Right>
@@ -193,6 +183,17 @@ namespace ela {
 			return expr::add<matrix<Columns, Rows, Type>, Right>(*this, other);
 		}
 
+		/* Add the resulting expression in place.
+		 */
+		template <typename Right>
+		inline
+		matrix<Columns, Rows, Type>&
+		operator += (Right const& other)
+		{
+			*this = *this + other;
+			return *this;
+		}
+
 		/* Create a subtraction expression.
 		 */
 		template <typename Right>
@@ -201,6 +202,38 @@ namespace ela {
 		operator - (Right const& other) const
 		{
 			return expr::sub<matrix<Columns, Rows, Type>, Right>(*this, other);
+		}
+
+		/* Subtract the resulting expression in place.
+		 */
+		template <typename Right>
+		inline
+		matrix<Columns, Rows, Type>&
+		operator -= (Right const& other)
+		{
+			*this = *this - other;
+			return *this;
+		}
+
+		/* Create a multiplication expression.
+		 */
+		template <typename Right>
+		inline
+		expr::mul<matrix<Columns, Rows, Type>, Right>
+		operator * (Right const& other) const
+		{
+			return expr::mul<matrix<Columns, Rows, Type>, Right>(*this, other);
+		}
+
+		/* Multiply the resulting expression in place.
+		 */
+		template <typename Right>
+		inline
+		matrix<Columns, Rows, Type>&
+		operator *= (Right const& other)
+		{
+			*this = *this * other;
+			return *this;
 		}
 
 		/* Return the wrapped raw pointer (row major).
