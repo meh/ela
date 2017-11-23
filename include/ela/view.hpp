@@ -26,10 +26,10 @@ namespace ela {
 		constexpr static size_t index = Index;
 
 	public:
-		template <size_t Columns, size_t Rows, typename Type>
+		template <size_t Rows, size_t Columns, typename Type>
 		static inline
 		Type const&
-		get (matrix<Columns, Rows, Type> const& inner, size_t row)
+		get (matrix<Rows, Columns, Type> const& inner, size_t row)
 		{
 			return inner(row, index);
 		}
@@ -44,10 +44,10 @@ namespace ela {
 		constexpr static size_t index = Index;
 
 	public:
-		template <size_t Columns, size_t Rows, typename Type>
+		template <size_t Rows, size_t Columns, typename Type>
 		static inline
 		Type const&
-		get (matrix<Columns, Rows, Type> const& inner, size_t column)
+		get (matrix<Rows, Columns, Type> const& inner, size_t column)
 		{
 			return inner(index, column);
 		}
@@ -55,17 +55,17 @@ namespace ela {
 
 	/* A constant view over a matrix.
 	 */
-	template <typename Accessor, size_t Columns, size_t Rows, typename Type>
+	template <typename Accessor, size_t Rows, size_t Columns, typename Type>
 	class view
 	{
 	public:
 		typedef Accessor                    accessor;
-		typedef matrix<Columns, Rows, Type> for_matrix;
+		typedef matrix<Rows, Columns, Type> for_matrix;
 
 	public:
 		/* Create a new view for the index.
 		 */
-		view (matrix<Columns, Rows, Type> const& inner) noexcept
+		view (matrix<Rows, Columns, Type> const& inner) noexcept
 			: _inner(inner)
 		{ }
 
@@ -85,12 +85,12 @@ namespace ela {
 
 	/* Create a new view.
 	 */
-	template <typename Accessor, size_t Columns, size_t Rows, typename Type>
+	template <typename Accessor, size_t Rows, size_t Columns, typename Type>
 	static inline
-	view<Accessor, Columns, Rows, Type>
-	make_view (matrix<Columns, Rows, Type> const& inner) noexcept
+	view<Accessor, Rows, Columns, Type>
+	make_view (matrix<Rows, Columns, Type> const& inner) noexcept
 	{
-		return view<Accessor, Columns, Rows, Type>(inner);
+		return view<Accessor, Rows, Columns, Type>(inner);
 	}
 }
 

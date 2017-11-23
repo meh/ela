@@ -25,15 +25,6 @@ namespace ela {
 	template <size_t Columns, size_t Rows, typename Type = float>
 	class matrix;
 
-	template <size_t Index>
-	class for_column;
-
-	template <size_t Index>
-	class for_row;
-
-	template <typename Accessor, size_t Columns, size_t Rows, typename Type = float>
-	class view;
-
 	namespace expr {
 		template <typename Left, typename Right>
 		class add;
