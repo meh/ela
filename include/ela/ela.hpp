@@ -15,6 +15,8 @@
 
 #include "expression.hpp"
 #include "expr/mul.hpp"
+#include "expr/add.hpp"
+#include "expr/sub.hpp"
 
 #include "matrix.hpp"
 #include "view.hpp"

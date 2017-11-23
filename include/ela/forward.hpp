@@ -13,6 +13,9 @@
 namespace ela {
 	class expression;
 
+	template <size_t Columns, size_t Rows, typename Type>
+	struct expression_traits;
+
 	template <typename Input>
 	class unary_expression;
 

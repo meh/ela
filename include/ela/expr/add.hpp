@@ -10,35 +10,29 @@
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
-#ifndef _ELA_EXPR_MUL_H
-#define _ELA_EXPR_MUL_H
+#ifndef _ELA_ADD_MUL_H
+#define _ELA_ADD_MUL_H
 
 namespace ela { namespace expr {
 	template <typename Left, typename Right>
-	class mul : public binary_expression<Left, Right>,
-	            public expression_traits<Right::columns, Left::rows, typename Left::type>
+	class add : public binary_expression<Left, Right>,
+	            public expression_traits<Left::columns, Left::rows, typename Left::type>
 	{
-		static_assert(Left::columns == Right::rows,
+		static_assert(Left::columns == Right::columns && Left::rows == Right::rows,
 			"rows and columns don't match");
 
 	public:
-		typedef expression_traits<Right::columns, Left::rows, typename Left::type> traits;
+		typedef expression_traits<Left::columns, Left::rows, typename Left::type> traits;
 
 	public:
-		mul (Left const& left, Right const& right) noexcept
+		add (Left const& left, Right const& right) noexcept
 			: binary_expression<Left, Right>(left, right)
 		{ }
 
 		typename traits::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			typename traits::type scalar = 0;
-
-			for (size_t i = 0; i < Left::columns; i++) {
-				scalar += this->_left(row, i) * this->_right(i, column);
-			}
-
-			return scalar;
+			return this->_left(row, column) + this->_right(row, column);
 		}
 	};
 } }

@@ -27,7 +27,8 @@ namespace ela {
 
 	public:
 		template <size_t Columns, size_t Rows, typename Type>
-		static Type const&
+		static inline
+		Type const&
 		get (matrix<Columns, Rows, Type> const& inner, size_t row)
 		{
 			return inner(row, index);
@@ -44,7 +45,8 @@ namespace ela {
 
 	public:
 		template <size_t Columns, size_t Rows, typename Type>
-		static Type const&
+		static inline
+		Type const&
 		get (matrix<Columns, Rows, Type> const& inner, size_t column)
 		{
 			return inner(index, column);
@@ -63,13 +65,19 @@ namespace ela {
 	public:
 		/* Create a new view for the index.
 		 */
-		view (matrix<Columns, Rows, Type> const& inner) noexcept;
+		view (matrix<Columns, Rows, Type> const& inner) noexcept
+			: _inner(inner)
+		{ }
 
 		/*
 		 * Access the value at the index.
 		 */
+		inline
 		Type const&
-		operator [] (size_t index) const noexcept;
+		operator [] (size_t index) const noexcept
+		{
+			return Accessor::get(_inner, index);
+		}
 
 	private:
 		for_matrix const& _inner;
@@ -84,9 +92,5 @@ namespace ela {
 		return view<Accessor, Columns, Rows, Type>(inner);
 	}
 }
-
-#ifndef _ELA_VIEW_NO_IMPL
-#include "view.tpp"
-#endif
 
 #endif

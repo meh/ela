@@ -19,6 +19,17 @@ namespace ela {
 	class expression
 	{ };
 
+	template <size_t Columns, size_t Rows, typename Type>
+	struct expression_traits
+	{
+	public:
+		typedef Type type;
+		static constexpr size_t columns = Columns;
+		static constexpr size_t rows = Rows;
+		static constexpr size_t bytes = Columns * Rows * sizeof(Type);
+		static constexpr size_t elements = Columns * Rows;
+	};
+
 	/* Unary expressions.
 	 */
 	template <typename Input>
@@ -45,7 +56,6 @@ namespace ela {
 			"type mismatch");
 
 	public:
-		typedef typename Left::type type;
 		typedef Left  left;
 		typedef Right right;
 
