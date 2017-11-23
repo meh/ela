@@ -66,7 +66,7 @@ main (void)
 			amiequal(a(2, 2), 10.0);
 		}},
 
-		{"sub", []{
+		{"subtract", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
 			ela::matrix<float, 3, 3> b(1.0);
 			ela::matrix<float, 3, 3> c = a - b;
@@ -84,7 +84,7 @@ main (void)
 			amiequal(c(2, 2), 8.0);
 		}},
 
-		{"sub in palce", []{
+		{"subtract in palce", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
 			ela::matrix<float, 3, 3> b(1.0);
 			a -= b;
@@ -102,7 +102,7 @@ main (void)
 			amiequal(a(2, 2), 8.0);
 		}},
 
-		{"mul", []{
+		{"multiply", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
 			ela::matrix<float, 3, 3> b(2.0);
 			ela::matrix<float, 3, 3> c = a * b;
@@ -120,7 +120,7 @@ main (void)
 			amiequal(c(2, 2), 18.0);
 		}},
 
-		{"mul in place", []{
+		{"multiply in place", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
 			ela::matrix<float, 3, 3> b(2.0);
 			a *= b;
@@ -136,6 +136,40 @@ main (void)
 			amiequal(a(2, 0), 14.0);
 			amiequal(a(2, 1), 16.0);
 			amiequal(a(2, 2), 18.0);
+		}},
+
+		{"scale", []{
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b = a * 2;
+
+			amiequal(b(0, 0), 2.0);
+			amiequal(b(0, 1), 4.0);
+			amiequal(b(0, 2), 6.0);
+
+			amiequal(b(1, 0), 8.0);
+			amiequal(b(1, 1), 10.0);
+			amiequal(b(1, 2), 12.0);
+
+			amiequal(b(2, 0), 14.0);
+			amiequal(b(2, 1), 16.0);
+			amiequal(b(2, 2), 18.0);
+		}},
+
+		{"transpose", []{
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b = ~a;
+
+			amiequal(b(0, 0), 1.0);
+			amiequal(b(0, 1), 4.0);
+			amiequal(b(0, 2), 7.0);
+
+			amiequal(b(1, 0), 2.0);
+			amiequal(b(1, 1), 5.0);
+			amiequal(b(1, 2), 8.0);
+
+			amiequal(b(2, 0), 3.0);
+			amiequal(b(2, 1), 6.0);
+			amiequal(b(2, 2), 9.0);
 		}},
 	});
 }

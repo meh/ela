@@ -10,26 +10,33 @@
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
-#ifndef _ELA_SUB_MUL_H
-#define _ELA_SUB_MUL_H
+#ifndef _ELA_EXPRESSION_SUBTRACT_H
+#define _ELA_EXPRESSION_SUBTRACT_H
 
-namespace ela { namespace expr {
+namespace ela { namespace expression {
 	template <typename Left, typename Right>
-	class sub : public binary_expression<Left, Right>,
-	            public expression_traits<typename Left::type, Left::rows, Left::columns>
+	struct traits<subtract<Left, Right>>
 	{
-		static_assert(Left::rows == Right::rows && Left::columns == Right::columns,
+		typedef typename traits<Left>::type type;
+		static constexpr size_t rows = traits<Left>::rows;
+		static constexpr size_t columns = traits<Left>::columns;
+	};
+
+	template <typename Left, typename Right>
+	class subtract : public binary<subtract<Left, Right>, Left, Right>
+	{
+		static_assert(
+			traits<Left>::rows == traits<Right>::rows &&
+			traits<Left>::columns == traits<Right>::columns,
 			"rows and columns don't match");
 
 	public:
-		typedef expression_traits<typename Left::type, Left::rows, Left::columns> traits;
-
-	public:
-		sub (Left const& left, Right const& right) noexcept
-			: binary_expression<Left, Right>(left, right)
+		subtract (Left const& left, Right const& right) noexcept
+			: binary<subtract<Left, Right>, Left, Right>(left, right)
 		{ }
 
-		typename traits::type
+		inline
+		typename traits<Left>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
 			return this->_left(row, column) - this->_right(row, column);

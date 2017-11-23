@@ -13,33 +13,81 @@
 #ifndef _ELA_EXPRESSION_H
 #define _ELA_EXPRESSION_H
 
-namespace ela {
+namespace ela { namespace expression {
+	template <typename Expr>
+	struct traits
+	{
+		typedef void type;
+		static constexpr size_t rows = 1;
+		static constexpr size_t columns = 1;
+	};
+
 	/* Base expression type.
 	 */
-	class expression
-	{ };
-
-	template <typename Type, size_t Rows, size_t Columns>
-	struct expression_traits
+	template <typename Expr>
+	class base
 	{
 	public:
-		typedef Type type;
-		static constexpr size_t rows = Rows;
-		static constexpr size_t columns = Columns;
-		static constexpr size_t bytes = Rows * Columns * sizeof(Type);
-		static constexpr size_t elements = Rows * Columns;
+		/* Create an addition expression.
+		 */
+		template <typename Right>
+		inline
+		add<Expr, Right>
+		operator + (Right const& other) const noexcept
+		{
+			return add<Expr, Right>(static_cast<Expr const&>(*this), other);
+		}
+
+		/* Create a subtraction expression.
+		 */
+		template <typename Right>
+		inline
+		subtract<Expr, Right>
+		operator - (Right const& other) const noexcept
+		{
+			return subtract<Expr, Right>(static_cast<Expr const&>(*this), other);
+		}
+
+		/* Create a multiplication expression.
+		 */
+		template <typename Right>
+		inline
+		typename std::enable_if<!std::is_same<typename traits<Right>::type, void>::value,
+		multiply<Expr, Right>>::type
+		operator * (Right const& other) const noexcept
+		{
+			return multiply<Expr, Right>(static_cast<Expr const&>(*this), other);
+		}
+
+		/* Create a multiplication expression.
+		 */
+		inline
+		scale<Expr>
+		operator * (typename traits<Expr>::type value) const noexcept
+		{
+			return scale<Expr>(static_cast<Expr const&>(*this), value);
+		}
+
+		/* Create a transpose expression.
+		 */
+		inline
+		transpose<Expr>
+		operator ~ () const noexcept
+		{
+			return transpose<Expr>(static_cast<Expr const&>(*this));
+		}
 	};
 
 	/* Unary expressions.
 	 */
-	template <typename Input>
-	class unary_expression: public expression
+	template <typename Expr, typename Input>
+	class unary: public base<Expr>
 	{
 	public:
 		typedef Input input;
 
 	protected:
-		unary_expression (Input const& input) noexcept
+		unary (Input const& input) noexcept
 			: _input(input)
 		{ }
 
@@ -49,10 +97,10 @@ namespace ela {
 
 	/* Binary expressions.
 	 */
-	template <typename Left, typename Right>
-	class binary_expression: public expression
+	template <typename Expr, typename Left, typename Right>
+	class binary: public base<Expr>
 	{
-		static_assert(std::is_same<typename Left::type, typename Right::type>::value,
+		static_assert(std::is_same<typename traits<Left>::type, typename traits<Right>::type>::value,
 			"type mismatch");
 
 	public:
@@ -60,7 +108,7 @@ namespace ela {
 		typedef Right right;
 
 	protected:
-		binary_expression (Left const& left, Right const& right) noexcept
+		binary (Left const& left, Right const& right) noexcept
 			: _left(left), _right(right)
 		{ }
 
@@ -68,10 +116,17 @@ namespace ela {
 		Left const&  _left;
 		Right const& _right;
 	};
-}
+} }
 
-#include "expr/add.hpp"
-#include "expr/sub.hpp"
-#include "expr/mul.hpp"
+/* Binary expressions.
+ */
+#include "expression/add.hpp"
+#include "expression/subtract.hpp"
+#include "expression/multiply.hpp"
+#include "expression/scale.hpp"
+
+/* Unary expressions.
+ */
+#include "expression/transpose.hpp"
 
 #endif

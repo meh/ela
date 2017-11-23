@@ -10,41 +10,19 @@
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
-#ifndef _ELA_FORWARD_H
-#define _ELA_FORWARD_H
+#ifndef _ELA_VECTOR_H
+#define _ELA_VECTOR_H
 
 namespace ela {
-	namespace expression {
-		template <typename Expr>
-		struct traits;
+	/* A column vector.
+	 */
+	template <typename Type, size_t Rows>
+	using column_vector = matrix<Type, Rows, 1>;
 
-		template <typename Expr>
-		class base;
-
-		template <typename Expr, typename Input>
-		class unary;
-
-		template <typename Expr, typename Left, typename Right>
-		class binary;
-
-		template <typename Left, typename Right>
-		class add;
-
-		template <typename Left, typename Right>
-		class subtract;
-
-		template <typename Left, typename Right>
-		class multiply;
-
-		template <typename Input>
-		class scale;
-
-		template <typename Input>
-		class transpose;
-	}
-
-	template <typename Type, size_t Rows, size_t Columns>
-	class matrix;
+	/* A row vector.
+	 */
+	template <typename Type, size_t Columns>
+	using row_vector = matrix<Type, 1, Columns>;
 }
 
 #endif

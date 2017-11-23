@@ -7,11 +7,11 @@ main (void)
 {
 	return amirite("vector", {
 		{"zero", []{
-			ela::vector<3> vec;
+			ela::column_vector<float, 3> vec;
 
-			amiequal(vec(0), 0);
-			amiequal(vec(1), 0);
-			amiequal(vec(2), 0);
+			amiequal(vec[0], 0);
+			amiequal(vec[1], 0);
+			amiequal(vec[2], 0);
 		}},
 	});
 }

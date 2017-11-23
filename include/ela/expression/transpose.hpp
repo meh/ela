@@ -10,29 +10,31 @@
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
-#ifndef _ELA_ADD_MUL_H
-#define _ELA_ADD_MUL_H
+#ifndef _ELA_EXPRESSION_TRANSPOSE_H
+#define _ELA_EXPRESSION_TRANSPOSE_H
 
-namespace ela { namespace expr {
-	template <typename Left, typename Right>
-	class add : public binary_expression<Left, Right>,
-	            public expression_traits<typename Left::type, Left::rows, Left::columns>
+namespace ela { namespace expression {
+	template <typename Input>
+	struct traits<transpose<Input>>
 	{
-		static_assert(Left::rows == Right::rows && Left::columns == Right::columns,
-			"rows and columns don't match");
+		typedef typename traits<Input>::type type;
+		static constexpr size_t rows = traits<Input>::columns;
+		static constexpr size_t columns = traits<Input>::rows;
+	};
 
+	template <typename Input>
+	class transpose : public unary<transpose<Input>, Input>
+	{
 	public:
-		typedef expression_traits<typename Left::type, Left::rows, Left::columns> traits;
-
-	public:
-		add (Left const& left, Right const& right) noexcept
-			: binary_expression<Left, Right>(left, right)
+		transpose (Input const& input) noexcept
+			: unary<transpose<Input>, Input>(input)
 		{ }
 
-		typename traits::type
+		inline
+		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			return this->_left(row, column) + this->_right(row, column);
+			return this->_input(column, row);
 		}
 	};
 } }

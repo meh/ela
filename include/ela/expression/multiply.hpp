@@ -13,28 +13,34 @@
 #ifndef _ELA_EXPR_MUL_H
 #define _ELA_EXPR_MUL_H
 
-namespace ela { namespace expr {
+namespace ela { namespace expression {
 	template <typename Left, typename Right>
-	class mul : public binary_expression<Left, Right>,
-	            public expression_traits<typename Left::type, Left::rows, Right::columns>
+	struct traits<multiply<Left, Right>>
 	{
-		static_assert(Left::columns == Right::rows,
+		public:
+			typedef typename traits<Left>::type type;
+			static constexpr size_t rows = traits<Left>::rows;
+			static constexpr size_t columns = traits<Right>::columns;
+	};
+
+	template <typename Left, typename Right>
+	class multiply : public binary<multiply<Left, Right>, Left, Right>
+	{
+		static_assert(traits<Left>::columns == traits<Right>::rows,
 			"rows and columns don't match");
 
 	public:
-		typedef expression_traits<typename Left::type, Left::rows, Right::columns> traits;
-
-	public:
-		mul (Left const& left, Right const& right) noexcept
-			: binary_expression<Left, Right>(left, right)
+		multiply (Left const& left, Right const& right) noexcept
+			: binary<multiply<Left, Right>, Left, Right>(left, right)
 		{ }
 
-		typename traits::type
+		inline
+		typename traits<Left>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			typename traits::type scalar = 0;
+			typename traits<Left>::type scalar = 0;
 
-			for (size_t i = 0; i < Left::columns; i++) {
+			for (size_t i = 0; i < traits<Left>::columns; i++) {
 				scalar += this->_left(row, i) * this->_right(i, column);
 			}
 
