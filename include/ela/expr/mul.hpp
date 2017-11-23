@@ -16,13 +16,13 @@
 namespace ela { namespace expr {
 	template <typename Left, typename Right>
 	class mul : public binary_expression<Left, Right>,
-	            public expression_traits<Right::columns, Left::rows, typename Left::type>
+	            public expression_traits<typename Left::type, Left::rows, Right::columns>
 	{
 		static_assert(Left::columns == Right::rows,
 			"rows and columns don't match");
 
 	public:
-		typedef expression_traits<Right::columns, Left::rows, typename Left::type> traits;
+		typedef expression_traits<typename Left::type, Left::rows, Right::columns> traits;
 
 	public:
 		mul (Left const& left, Right const& right) noexcept

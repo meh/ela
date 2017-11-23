@@ -7,7 +7,7 @@ main (void)
 {
 	return amirite("matrix", {
 		{"zero", []{
-			ela::matrix<3, 3> mat;
+			ela::matrix<float, 3, 3> mat;
 
 			amiequal(mat(0, 0), 0);
 			amiequal(mat(0, 1), 0);
@@ -23,7 +23,7 @@ main (void)
 		}},
 
 		{"identity", []{
-			ela::matrix<3, 3> mat(1.0);
+			ela::matrix<float, 3, 3> mat(1.0);
 
 			amiequal(mat(0, 0), 1.0);
 			amiequal(mat(1, 1), 1.0);
@@ -31,9 +31,9 @@ main (void)
 		}},
 
 		{"add", []{
-			ela::matrix<3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<3, 3> b(1.0);
-			ela::matrix<3, 3> c = a + b;
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b(1.0);
+			ela::matrix<float, 3, 3> c = a + b;
 
 			amiequal(c(0, 0), 2.0);
 			amiequal(c(0, 1), 2.0);
@@ -49,8 +49,8 @@ main (void)
 		}},
 
 		{"add in place", []{
-			ela::matrix<3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<3, 3> b(1.0);
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b(1.0);
 			a += b;
 
 			amiequal(a(0, 0), 2.0);
@@ -67,9 +67,9 @@ main (void)
 		}},
 
 		{"sub", []{
-			ela::matrix<3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<3, 3> b(1.0);
-			ela::matrix<3, 3> c = a - b;
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b(1.0);
+			ela::matrix<float, 3, 3> c = a - b;
 
 			amiequal(c(0, 0), 0.0);
 			amiequal(c(0, 1), 2.0);
@@ -85,8 +85,8 @@ main (void)
 		}},
 
 		{"sub in palce", []{
-			ela::matrix<3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<3, 3> b(1.0);
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b(1.0);
 			a -= b;
 
 			amiequal(a(0, 0), 0.0);
@@ -103,9 +103,9 @@ main (void)
 		}},
 
 		{"mul", []{
-			ela::matrix<3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<3, 3> b(2.0);
-			ela::matrix<3, 3> c = a * b;
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b(2.0);
+			ela::matrix<float, 3, 3> c = a * b;
 
 			amiequal(c(0, 0), 2.0);
 			amiequal(c(0, 1), 4.0);
@@ -121,8 +121,8 @@ main (void)
 		}},
 
 		{"mul in place", []{
-			ela::matrix<3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<3, 3> b(2.0);
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b(2.0);
 			a *= b;
 
 			amiequal(a(0, 0), 2.0);

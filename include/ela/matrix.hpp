@@ -20,11 +20,11 @@
 namespace ela {
 	/* A matrix.
 	 */
-	template <size_t Columns, size_t Rows, typename Type>
-	class matrix: public expression, public expression_traits<Columns, Rows, Type>
+	template <typename Type, size_t Rows, size_t Columns>
+	class matrix: public expression, public expression_traits<Type, Rows, Columns>
 	{
 	public:
-		typedef expression_traits<Columns, Rows, Type> traits;
+		typedef expression_traits<Type, Rows, Columns> traits;
 
 	public:
 		/* Create an empty matrix.
@@ -34,8 +34,8 @@ namespace ela {
 
 		/* Create an identity matrix with the given value.
 		 */
-		template <size_t C = Columns, size_t R = Rows>
-		matrix (Type value, typename std::enable_if<C == R>::type* = 0) noexcept
+		template <size_t R = Rows, size_t C = Columns>
+		matrix (Type value, typename std::enable_if<R == C>::type* = 0) noexcept
 		{
 			for (size_t i = 0; i < Rows; i++) {
 				_buffer[i * Rows + i] = value;
@@ -44,15 +44,15 @@ namespace ela {
 
 		/* Create a matrix from the given expression.
 		 */
-		template <typename Expr, size_t C = Columns, size_t R = Rows, typename T = Type>
-		matrix (Expr const& expr, typename std::enable_if<C == Expr::columns && R == Expr::rows && std::is_same<T, typename Expr::type>::value>::type* = 0) noexcept
+		template <typename Expr, typename T = Type, size_t R = Rows, size_t C = Columns>
+		matrix (Expr const& expr, typename std::enable_if<R == Expr::rows && C == Expr::columns && std::is_same<T, typename Expr::type>::value>::type* = 0) noexcept
 		{
 			*this = expr;
 		}
 
 		/* Create a matrix from another matrix, copying the data.
 		 */
-		matrix (matrix<Columns, Rows, Type> const& from) noexcept
+		matrix (matrix<Type, Rows, Columns> const& from) noexcept
 		{
 			*this = from;
 		}
@@ -74,10 +74,10 @@ namespace ela {
 		/* Copy the contents of the matrix.
 		 */
 		inline
-		matrix<Columns, Rows, Type>&
-		operator = (matrix<Columns, Rows, Type> const& from) noexcept
+		matrix<Type, Rows, Columns>&
+		operator = (matrix<Type, Rows, Columns> const& from) noexcept
 		{
-			std::copy(&from, &from + Columns * Rows, _buffer);
+			std::copy(&from, &from + Rows * Columns, _buffer);
 
 			return *this;
 		}
@@ -85,10 +85,10 @@ namespace ela {
 		/* Copy the data present in the pointer.
 		 */
 		inline
-		matrix<Columns, Rows, Type>&
+		matrix<Type, Rows, Columns>&
 		operator = (const Type* data) noexcept
 		{
-			std::copy(data, data + Columns * Rows, _buffer);
+			std::copy(data, data + Rows * Columns, _buffer);
 
 			return *this;
 		}
@@ -96,10 +96,10 @@ namespace ela {
 		/* Copy the data from the initializer list.
 		 */
 		inline
-		matrix<Columns, Rows, Type>&
+		matrix<Type, Rows, Columns>&
 		operator = (std::initializer_list<std::initializer_list<Type>> rows) noexcept
 		{
-			std::fill_n(_buffer, Columns * Rows, 0);
+			std::fill_n(_buffer, Rows * Columns, 0);
 
 			size_t row_index = 0;
 			for (auto row : rows) {
@@ -118,12 +118,12 @@ namespace ela {
 
 		/* Copy the data from the expression.
 		 */
-		template <typename Expr, size_t C = Columns, size_t R = Rows, typename T = Type>
+		template <typename Expr, typename T = Type, size_t R = Rows, size_t C = Columns>
 		inline
-		typename std::enable_if<C == Expr::columns &&
-		                        R == Expr::rows &&
+		typename std::enable_if<R == Expr::rows &&
+		                        C == Expr::columns &&
 		                        std::is_same<T, typename Expr::type>::value,
-		matrix<Columns, Rows, Type>&>::type
+		matrix<Type, Rows, Columns>&>::type
 		operator = (Expr const& expr) noexcept
 		{
 			for (size_t row = 0; row < Rows; row++) {
@@ -153,41 +153,41 @@ namespace ela {
 			return _buffer[column * Rows + row];
 		}
 
-		/* Access a scalar at the given column, only available for vectors.
+		/* Access a scalar at the given index, only available for vectors.
 		 */
-		template <size_t R = Rows>
+		template <typename T = Type, size_t R = Rows, size_t C = Columns>
 		inline
-		typename std::enable_if<R == 1, Type>::type const&
-		operator () (size_t column) const noexcept
+		typename std::enable_if<R == 1 || C == 1, T const&>::type
+		operator [] (size_t index) const noexcept
 		{
-			return _buffer[column];
+			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
 		}
 
-		/* Access a scalar at the given column, only available for vectors.
+		/* Access a scalar at the given index, only available for vectors.
 		 */
-		template <size_t R = Rows>
+		template <typename T = Type, size_t R = Rows, size_t C = Columns>
 		inline
-		typename std::enable_if<R == 1, Type>::type&
-		operator () (size_t column) noexcept
+		typename std::enable_if<R == 1 || C == 1, T&>::type
+		operator [] (size_t index) noexcept
 		{
-			return _buffer[column];
+			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
 		}
 
 		/* Create an addition expression.
 		 */
 		template <typename Right>
 		inline
-		expr::add<matrix<Columns, Rows, Type>, Right>
+		expr::add<matrix<Type, Rows, Columns>, Right>
 		operator + (Right const& other) const
 		{
-			return expr::add<matrix<Columns, Rows, Type>, Right>(*this, other);
+			return expr::add<matrix<Type, Rows, Columns>, Right>(*this, other);
 		}
 
 		/* Add the resulting expression in place.
 		 */
 		template <typename Right>
 		inline
-		matrix<Columns, Rows, Type>&
+		matrix<Type, Rows, Columns>&
 		operator += (Right const& other)
 		{
 			*this = *this + other;
@@ -198,17 +198,17 @@ namespace ela {
 		 */
 		template <typename Right>
 		inline
-		expr::sub<matrix<Columns, Rows, Type>, Right>
+		expr::sub<matrix<Type, Rows, Columns>, Right>
 		operator - (Right const& other) const
 		{
-			return expr::sub<matrix<Columns, Rows, Type>, Right>(*this, other);
+			return expr::sub<matrix<Type, Rows, Columns>, Right>(*this, other);
 		}
 
 		/* Subtract the resulting expression in place.
 		 */
 		template <typename Right>
 		inline
-		matrix<Columns, Rows, Type>&
+		matrix<Type, Rows, Columns>&
 		operator -= (Right const& other)
 		{
 			*this = *this - other;
@@ -219,17 +219,17 @@ namespace ela {
 		 */
 		template <typename Right>
 		inline
-		expr::mul<matrix<Columns, Rows, Type>, Right>
+		expr::mul<matrix<Type, Rows, Columns>, Right>
 		operator * (Right const& other) const
 		{
-			return expr::mul<matrix<Columns, Rows, Type>, Right>(*this, other);
+			return expr::mul<matrix<Type, Rows, Columns>, Right>(*this, other);
 		}
 
 		/* Multiply the resulting expression in place.
 		 */
 		template <typename Right>
 		inline
-		matrix<Columns, Rows, Type>&
+		matrix<Type, Rows, Columns>&
 		operator *= (Right const& other)
 		{
 			*this = *this * other;
@@ -253,13 +253,8 @@ namespace ela {
 		}
 
 	private:
-		Type _buffer[Columns * Rows] = { 0 };
+		Type _buffer[Rows * Columns] = { 0 };
 	};
-
-	/* A vector.
-	 */
-	template <size_t Columns, typename Type = float>
-	using vector = matrix<Columns, 1, Type>;
 }
 
 #endif

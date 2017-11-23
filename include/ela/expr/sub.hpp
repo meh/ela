@@ -16,13 +16,13 @@
 namespace ela { namespace expr {
 	template <typename Left, typename Right>
 	class sub : public binary_expression<Left, Right>,
-	            public expression_traits<Left::columns, Left::rows, typename Left::type>
+	            public expression_traits<typename Left::type, Left::rows, Left::columns>
 	{
-		static_assert(Left::columns == Right::columns && Left::rows == Right::rows,
+		static_assert(Left::rows == Right::rows && Left::columns == Right::columns,
 			"rows and columns don't match");
 
 	public:
-		typedef expression_traits<Left::columns, Left::rows, typename Left::type> traits;
+		typedef expression_traits<typename Left::type, Left::rows, Left::columns> traits;
 
 	public:
 		sub (Left const& left, Right const& right) noexcept

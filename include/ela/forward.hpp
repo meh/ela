@@ -13,7 +13,7 @@
 namespace ela {
 	class expression;
 
-	template <size_t Columns, size_t Rows, typename Type>
+	template <typename Type, size_t Rows, size_t Columns>
 	struct expression_traits;
 
 	template <typename Input>
@@ -22,7 +22,7 @@ namespace ela {
 	template <typename Left, typename Right>
 	class binary_expression;
 
-	template <size_t Columns, size_t Rows, typename Type = float>
+	template <typename Type, size_t Rows, size_t Columns>
 	class matrix;
 
 	namespace expr {

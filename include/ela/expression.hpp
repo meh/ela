@@ -19,15 +19,15 @@ namespace ela {
 	class expression
 	{ };
 
-	template <size_t Columns, size_t Rows, typename Type>
+	template <typename Type, size_t Rows, size_t Columns>
 	struct expression_traits
 	{
 	public:
 		typedef Type type;
-		static constexpr size_t columns = Columns;
 		static constexpr size_t rows = Rows;
-		static constexpr size_t bytes = Columns * Rows * sizeof(Type);
-		static constexpr size_t elements = Columns * Rows;
+		static constexpr size_t columns = Columns;
+		static constexpr size_t bytes = Rows * Columns * sizeof(Type);
+		static constexpr size_t elements = Rows * Columns;
 	};
 
 	/* Unary expressions.
