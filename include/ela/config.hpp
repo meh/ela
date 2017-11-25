@@ -10,10 +10,9 @@
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
-#ifndef ELA_INLINE
-#	ifdef NDEBUG
-#		define ELA_INLINE inline
-#	else
-#		define ELA_INLINE
-#	endif
-#endif
+#define assume(predicate) \
+	{	assert(predicate); \
+		if (!(predicate)) { \
+			__builtin_unreachable(); \
+		} \
+	}

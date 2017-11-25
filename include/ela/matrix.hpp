@@ -13,10 +13,6 @@
 #ifndef _ELA_MATRIX_H
 #define _ELA_MATRIX_H
 
-#include <algorithm>
-#include <cmath>
-#include <initializer_list>
-
 namespace ela {
 	namespace expression {
 		template <typename Type, size_t Rows, size_t Columns>
@@ -176,6 +172,8 @@ namespace ela {
 		Type const&
 		operator () (size_t row, size_t column) const noexcept
 		{
+			assume(row <= Rows && column <= Columns);
+
 			return _buffer[column * Rows + row];
 		}
 
@@ -185,6 +183,8 @@ namespace ela {
 		Type&
 		operator () (size_t row, size_t column) noexcept
 		{
+			assume(row <= Rows && column <= Columns);
+
 			return _buffer[column * Rows + row];
 		}
 
@@ -195,6 +195,8 @@ namespace ela {
 		typename std::enable_if<R == 1 || C == 1, T const&>::type
 		operator [] (size_t index) const noexcept
 		{
+			assume(R == 1 ? index <= C : index <= R);
+
 			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
 		}
 
@@ -205,6 +207,8 @@ namespace ela {
 		typename std::enable_if<R == 1 || C == 1, T&>::type
 		operator [] (size_t index) noexcept
 		{
+			assume(R == 1 ? index <= C : index <= R);
+
 			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
 		}
 

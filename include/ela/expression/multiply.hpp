@@ -38,6 +38,8 @@ namespace ela { namespace expression {
 		typename traits<Left>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
+			assume(row <= traits<Left>::rows && column <= traits<Right>::columns);
+
 			typename traits<Left>::type scalar = 0;
 
 			for (size_t i = 0; i < traits<Left>::columns; i++) {

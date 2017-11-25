@@ -13,6 +13,11 @@
 #ifndef _ELA_FORWARD_H
 #define _ELA_FORWARD_H
 
+#include <algorithm>
+#include <initializer_list>
+#include <cmath>
+#include <cassert>
+
 namespace ela {
 	namespace expression {
 		template <typename Expr>
