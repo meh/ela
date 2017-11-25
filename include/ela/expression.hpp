@@ -76,6 +76,15 @@ namespace ela { namespace expression {
 		{
 			return transpose<Expr>(static_cast<Expr const&>(*this));
 		}
+
+		/* Create an inversion expression.
+		 */
+		inline
+		invert<Expr>
+		operator ! () const noexcept
+		{
+			return invert<Expr>(static_cast<Expr const&>(*this));
+		}
 	};
 
 	/* Unary expressions.
@@ -128,5 +137,6 @@ namespace ela { namespace expression {
 /* Unary expressions.
  */
 #include "expression/transpose.hpp"
+#include "expression/invert.hpp"
 
 #endif

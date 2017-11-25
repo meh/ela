@@ -46,6 +46,12 @@ namespace ela {
 
 		template <typename Input>
 		class transpose;
+
+		template <typename Input, size_t Dimension>
+		struct inversion;
+
+		template <typename Input>
+		class invert;
 	}
 
 	template <typename Type, size_t Rows, size_t Columns>
