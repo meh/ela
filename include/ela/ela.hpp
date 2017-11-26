@@ -10,9 +10,63 @@
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 
-#include "config.hpp"
-#include "forward.hpp"
+#ifndef _ELA_H
+#define _ELA_H
+
+#include <algorithm>
+#include <initializer_list>
+#include <cmath>
+#include <cassert>
+
+#define assume(predicate) \
+	{	assert(predicate); \
+		if (!(predicate)) { \
+			__builtin_unreachable(); \
+		} \
+	}
+
+namespace ela {
+	namespace expression {
+		template <typename Expr>
+		struct traits;
+
+		template <typename Expr>
+		class base;
+
+		template <typename Expr, typename Input>
+		class unary;
+
+		template <typename Expr, typename Left, typename Right>
+		class binary;
+
+		template <typename Left, typename Right>
+		class add;
+
+		template <typename Left, typename Right>
+		class subtract;
+
+		template <typename Left, typename Right>
+		class multiply;
+
+		template <typename Input>
+		class scale;
+
+		template <typename Input>
+		class transpose;
+
+		template <typename Input, size_t Dimension>
+		struct inversion;
+
+		template <typename Input>
+		class invert;
+	}
+
+	template <typename Type, size_t Rows, size_t Columns>
+	class matrix;
+}
 
 #include "expression.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"
+
+#endif
