@@ -245,6 +245,17 @@ namespace ela {
 			return *this;
 		}
 
+		/* Multiply the resulting expression in place.
+		 */
+		template <typename Right>
+		inline
+		matrix<Type, Rows, Columns>&
+		operator *= (Type other) noexcept
+		{
+			*this = *this * other;
+			return *this;
+		}
+
 		/* Return the wrapped raw pointer (row major).
 		 */
 		inline
