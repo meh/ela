@@ -176,8 +176,11 @@ main (void)
 			 ela::matrix<float, 2, 2> a = {{1, 2}, {3, 4}};
 			 ela::matrix<float, 2, 2> b = !a;
 
-			 std::cout << b(0, 0) << "\t" << b(0, 1) << std::endl;
-			 std::cout << b(1, 0) << "\t" << b(1, 1) << std::endl;
+			 amiequal(b(0, 0), -2);
+			 amiequal(b(0, 1), 1);
+
+			 amiequal(b(1, 0), 1.5);
+			 amiequal(b(1, 1), -0.5);
 		}},
 	});
 }
