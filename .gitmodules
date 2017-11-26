@@ -1,6 +1,3 @@
 [submodule "vendor/amirite"]
 	path = vendor/amirite
 	url = https://github.com/meh/amirite
-[submodule "vendor/optional"]
-	path = vendor/optional
-	url = https://github.com/akrzemi1/Optional
