@@ -113,6 +113,18 @@ namespace ela { namespace expression {
 		{
 			return !(*this == other);
 		}
+
+		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
+		inline
+		typename std::enable_if<R == 1 || C == 1, T>::type
+		operator [] (size_t index) const noexcept
+		{
+			assume(R == 1 ? index <= C : index <= R);
+
+			return (R == 1)
+				? static_cast<Expr const&>(*this)(0, index)
+				: static_cast<Expr const&>(*this)(index, 0);
+		}
 	};
 
 	/* Unary expressions.
