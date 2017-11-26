@@ -1,5 +1,5 @@
 CXX = clang++
-CXXFLAGS = -Iinclude -Ivendor/optional -Ivendor/amirite -std=c++11
+CXXFLAGS = -Wall -Wextra -Werror -Iinclude -Ivendor/amirite -std=c++11
 
 SOURCES := $(wildcard tests/*.cpp)
 DEPS := $(SOURCES:.cpp=.d)
