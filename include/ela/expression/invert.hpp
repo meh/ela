@@ -61,8 +61,7 @@ namespace ela { namespace expression {
 		}
 
 		inline
-		bool
-		is_valid () const noexcept
+		operator bool () const noexcept
 		{
 			return !std::isnan(_determinant);
 		}
@@ -201,7 +200,7 @@ namespace ela { namespace expression {
 					return (g * b) - (a * h);
 				}
 			}
-			else if (row == 2) {
+			else {
 				if (column == 0) {
 					return (b * f) - (c * e);
 				}
