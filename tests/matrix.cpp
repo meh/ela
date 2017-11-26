@@ -30,6 +30,20 @@ main (void)
 			amiequal(mat(2, 2), 1.0);
 		}},
 
+		{"equal", []{
+			ela::matrix<float, 3, 3> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+			ela::matrix<float, 3, 3> b = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}};
+
+			amiequal(a + b, b + a);
+		}},
+
+		{"not equal", []{
+			ela::matrix<float, 3, 3> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+			ela::matrix<float, 3, 3> b = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}};
+
+			amidifferent(a + b, b + a + a);
+		}},
+
 		{"add", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
 			ela::matrix<float, 3, 3> b(1.0);

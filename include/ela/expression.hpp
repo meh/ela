@@ -85,6 +85,34 @@ namespace ela { namespace expression {
 		{
 			return invert<Expr>(static_cast<Expr const&>(*this));
 		}
+
+		template <typename Right>
+		inline
+		bool
+		operator == (Right const& other) const noexcept
+		{
+			if (traits<Expr>::rows != traits<Right>::rows || traits<Expr>::columns != traits<Right>::columns) {
+				return false;
+			}
+
+			for (size_t row = 0; row < traits<Expr>::rows; row++) {
+				for (size_t column = 0; column < traits<Expr>::columns; column++) {
+					if (static_cast<Expr const&>(*this)(row, column) != other(row, column)) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		template <typename Right>
+		inline
+		bool
+		operator != (Right const& other) const noexcept
+		{
+			return !(*this == other);
+		}
 	};
 
 	/* Unary expressions.
