@@ -27,11 +27,12 @@
 #include <cassert>
 
 #ifdef ELA_NO_ASSUMPTIONS
-#	define assume(predicate) \
-		{	assert(predicate); }
+#	define assume(predicate) { \
+		assert(predicate); \
+	}
 #else
-#	define assume(predicate) \
-		{	assert(predicate); \
+#	define assume(predicate) { \
+		assert(predicate); \
 			if (!(predicate)) { \
 				__builtin_unreachable(); \
 			} \
