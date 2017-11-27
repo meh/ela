@@ -187,14 +187,17 @@ main (void)
 		}},
 
 		{"invert", []{
-			 ela::matrix<float, 2, 2> a = {{1, 2}, {3, 4}};
-			 ela::matrix<float, 2, 2> b = !a;
+			ela::matrix<float, 2, 2> a = {{1, 2}, {3, 4}};
+			ela::matrix<float, 2, 2> b = !a;
 
-			 amiequal(b(0, 0), -2);
-			 amiequal(b(0, 1), 1);
+			auto r = b.at<0, 0>();
+			amiequal(r, -2.0f);
 
-			 amiequal(b(1, 0), 1.5);
-			 amiequal(b(1, 1), -0.5);
+			amiequal(b(0, 0), -2);
+			amiequal(b(0, 1), 1);
+
+			amiequal(b(1, 0), 1.5);
+			amiequal(b(1, 1), -0.5);
 		}},
 	});
 }
