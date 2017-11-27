@@ -86,15 +86,6 @@ namespace ela {
 
 	template <typename Expr, typename Accessor>
 	class vector;
-
-	template <typename T, size_t S, size_t C>
-	static inline
-	void
-	check_initializer_list (const T(&)[C])
-	{
-		static_assert(S == C,
-			"size mismatch");
-	}
 }
 
 #include "expression.hpp"
