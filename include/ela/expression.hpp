@@ -14,15 +14,26 @@
 #define _ELA_EXPRESSION_H
 
 namespace ela { namespace expression {
+	/* Traits for expressions.
+	 */
 	template <typename Expr>
 	struct traits
 	{
+		/* The scalar type.
+		 */
 		typedef void type;
+
+		/* The number of rows.
+		 */
 		static constexpr size_t rows = 1;
+
+		/* The number of columns.
+		 */
 		static constexpr size_t columns = 1;
 	};
 
-	/* Base expression type.
+	/* Base expression type, defines common operators to all expressions and
+	 * expression-like types.
 	 */
 	template <typename Expr>
 	class base
@@ -86,6 +97,8 @@ namespace ela { namespace expression {
 			return invert<Expr>(static_cast<Expr const&>(*this));
 		}
 
+		/* Check two expressions yield the same result.
+		 */
 		template <typename Right>
 		inline
 		bool
@@ -106,6 +119,8 @@ namespace ela { namespace expression {
 			return true;
 		}
 
+		/* Check two expressions do not yield the same result.
+		 */
 		template <typename Right>
 		inline
 		bool
@@ -114,6 +129,8 @@ namespace ela { namespace expression {
 			return !(*this == other);
 		}
 
+		/* Access a scalar at the given index, only available for expressions returning vectors.
+		 */
 		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
 		inline
 		typename std::enable_if<R == 1 || C == 1, T>::type
@@ -133,9 +150,13 @@ namespace ela { namespace expression {
 	class unary: public base<Expr>
 	{
 	public:
+		/* The type of the input expression.
+		 */
 		typedef Input input;
 
 	protected:
+		/* Create a new unary expression.
+		 */
 		unary (Input const& input) noexcept
 			: _input(input)
 		{ }
@@ -153,10 +174,17 @@ namespace ela { namespace expression {
 			"type mismatch");
 
 	public:
-		typedef Left  left;
+		/* The type of the left hand side expression.
+		 */
+		typedef Left left;
+
+		/* The type of the right hand side expression.
+		 */
 		typedef Right right;
 
 	protected:
+		/* Create a new binary expression.
+		 */
 		binary (Left const& left, Right const& right) noexcept
 			: _left(left), _right(right)
 		{ }

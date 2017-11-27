@@ -22,16 +22,22 @@ namespace ela { namespace expression {
 		static constexpr size_t columns = traits<Input>::columns;
 	};
 
+	/* Scaling expression.
+	 */
 	template <typename Input>
 	class scale : public unary<scale<Input>, Input>
 	{
 	public:
 
 	public:
+		/* Create a new scaling expression.
+		 */
 		scale (Input const& input, typename traits<Input>::type factor) noexcept
 			: unary<scale<Input>, Input>(input), _factor(factor)
 		{ }
 
+		/* Access the scaled scalar at the given index.
+		 */
 		inline
 		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept

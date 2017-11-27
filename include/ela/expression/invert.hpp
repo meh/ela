@@ -22,6 +22,8 @@ namespace ela { namespace expression {
 		static constexpr size_t columns = traits<Input>::columns;
 	};
 
+	/* Matrix inversion implementations for various matrix dimensions.
+	 */
 	template <typename Input, size_t Dimension>
 	struct inversion
 	{
@@ -34,15 +36,21 @@ namespace ela { namespace expression {
 		static_assert(std::numeric_limits<typename traits<Input>::type>::has_quiet_NaN,
 			"the type must support NaN");
 
+		/* Calculate the determinant.
+		 */
 		static inline
 		typename traits<Input>::type
 		determinant (Input const& input) noexcept;
 
+		/* Access the scalar for the given index.
+		 */
 		static inline
 		typename traits<Input>::type
 		get (Input const& input, size_t row, size_t column) noexcept;
 	};
 
+	/* Inversion expression.
+	 */
 	template <typename Input>
 	class invert : public unary<invert<Input>, Input>
 	{
@@ -50,6 +58,8 @@ namespace ela { namespace expression {
 			"only square matrices are invertible");
 
 	public:
+		/* Create a new scaling expression.
+		 */
 		invert (Input const& input) noexcept
 			: unary<invert<Input>, Input>(input)
 		{
@@ -60,12 +70,16 @@ namespace ela { namespace expression {
 			}
 		}
 
+		/* Check whether the expression is invertible or not.
+		 */
 		inline
 		operator bool () const noexcept
 		{
 			return !std::isnan(_determinant);
 		}
 
+		/* Access the inverted scalar at the given index.
+		 */
 		inline
 		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept
@@ -90,8 +104,6 @@ namespace ela { namespace expression {
 		typename traits<Input>::type
 		determinant (Input const& input) noexcept
 		{
-			// |a b|
-			// |c d|
 			typename traits<Input>::type
 				a = input(0, 0),
 				b = input(0, 1),
@@ -143,9 +155,6 @@ namespace ela { namespace expression {
 		typename traits<Input>::type
 		determinant (Input const& input) noexcept
 		{
-			// |a b c|
-			// |d e f|
-			// |g h i|
 			typename traits<Input>::type
 				a = input(0, 0),
 				b = input(0, 1),

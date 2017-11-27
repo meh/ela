@@ -22,14 +22,20 @@ namespace ela { namespace expression {
 		static constexpr size_t columns = traits<Input>::rows;
 	};
 
+	/* Transposition expression, swaps rows with columns.
+	 */
 	template <typename Input>
 	class transpose : public unary<transpose<Input>, Input>
 	{
 	public:
+		/* Create a new transposition expression.
+		 */
 		transpose (Input const& input) noexcept
 			: unary<transpose<Input>, Input>(input)
 		{ }
 
+		/* Access the transposed scalar at the given index.
+		 */
 		inline
 		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept

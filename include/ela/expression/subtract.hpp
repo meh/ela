@@ -22,6 +22,8 @@ namespace ela { namespace expression {
 		static constexpr size_t columns = traits<Left>::columns;
 	};
 
+	/* Subtraction expression.
+	 */
 	template <typename Left, typename Right>
 	class subtract : public binary<subtract<Left, Right>, Left, Right>
 	{
@@ -31,10 +33,14 @@ namespace ela { namespace expression {
 			"rows and columns don't match");
 
 	public:
+		/* Create a new subtraction expression.
+		 */
 		subtract (Left const& left, Right const& right) noexcept
 			: binary<subtract<Left, Right>, Left, Right>(left, right)
 		{ }
 
+		/* Access the subtracted scalar at the given index.
+		 */
 		inline
 		typename traits<Left>::type
 		operator () (size_t row, size_t column) const noexcept

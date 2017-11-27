@@ -23,6 +23,8 @@ namespace ela { namespace expression {
 			static constexpr size_t columns = traits<Right>::columns;
 	};
 
+	/* Multiplication expression.
+	 */
 	template <typename Left, typename Right>
 	class multiply : public binary<multiply<Left, Right>, Left, Right>
 	{
@@ -30,10 +32,14 @@ namespace ela { namespace expression {
 			"rows and columns don't match");
 
 	public:
+		/* Create a new multiplication expression.
+		 */
 		multiply (Left const& left, Right const& right) noexcept
 			: binary<multiply<Left, Right>, Left, Right>(left, right)
 		{ }
 
+		/* Access the multiplied scalar at the given index.
+		 */
 		inline
 		typename traits<Left>::type
 		operator () (size_t row, size_t column) const noexcept

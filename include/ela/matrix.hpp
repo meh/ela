@@ -25,6 +25,8 @@ namespace ela {
 	}
 
 	/* A matrix.
+	 *
+	 * The internal buffer is a contiguous column-major array.
 	 */
 	template <typename Type, size_t Rows, size_t Columns>
 	class matrix: public expression::base<matrix<Type, Rows, Columns>>
