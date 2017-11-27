@@ -168,6 +168,17 @@ namespace ela {
 			return *this;
 		}
 
+		template <size_t Row, size_t Column>
+		inline
+		Type&
+		at () noexcept
+		{
+			static_assert(Row <= Rows && Column <= Columns,
+				"index out of bounds");
+
+			return (*this)(Row, Column);
+		}
+
 		/* Access a scalar at the given row and column.
 		 */
 		inline

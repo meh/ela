@@ -129,6 +129,17 @@ namespace ela { namespace expression {
 			return !(*this == other);
 		}
 
+		template <size_t Row, size_t Column>
+		inline
+		typename traits<Expr>::type const&
+		at () const noexcept
+		{
+			static_assert(Row <= traits<Expr>::rows && Column <= traits<Expr>::columns,
+				"index out of bounds");
+
+			return static_cast<Expr const&>(*this)(Row, Column);
+		}
+
 		/* Access a scalar at the given index, only available for expressions returning vectors.
 		 */
 		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
