@@ -129,7 +129,7 @@ namespace ela {
 
 				size_t column = 0;
 				for (auto element : columns) {
-					_buffer[column * Rows + row] = element;
+					_buffer[row * Columns + column] = element;
 
 					column++;
 				}
@@ -170,7 +170,7 @@ namespace ela {
 		{
 			for (size_t row = 0; row < Rows; row++) {
 				for (size_t column = 0; column < Columns; column++) {
-					_buffer[column * Rows + row] = expr(row, column);
+					_buffer[row * Columns + column] = expr(row, column);
 				}
 			}
 
@@ -196,7 +196,7 @@ namespace ela {
 		{
 			assume(row <= Rows && column <= Columns);
 
-			return _buffer[column * Rows + row];
+			return _buffer[row * Columns + column];
 		}
 
 		/* Access a scalar at the given row and column.
@@ -207,7 +207,7 @@ namespace ela {
 		{
 			assume(row <= Rows && column <= Columns);
 
-			return _buffer[column * Rows + row];
+			return _buffer[row * Columns + column];
 		}
 
 		/* Access a scalar at the given index, only available for vectors.
