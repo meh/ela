@@ -92,4 +92,5 @@ namespace ela {
 #include "matrix.hpp"
 #include "vector.hpp"
 
+#undef assume
 #endif
