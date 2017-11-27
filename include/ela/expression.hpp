@@ -33,11 +33,11 @@ namespace ela { namespace expression {
 
 		/* The number of rows.
 		 */
-		static constexpr size_t rows = 1;
+		static constexpr size_t rows = 0;
 
 		/* The number of columns.
 		 */
-		static constexpr size_t columns = 1;
+		static constexpr size_t columns = 0;
 	};
 
 	/* Base expression type, defines common operators to all expressions and
@@ -160,6 +160,20 @@ namespace ela { namespace expression {
 			return (R == 1)
 				? static_cast<Expr const&>(*this)(0, index)
 				: static_cast<Expr const&>(*this)(index, 0);
+		}
+
+		inline
+		vector<Expr, for_column<Expr>>
+		column (size_t index) noexcept
+		{
+			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), index);
+		}
+
+		inline
+		vector<Expr, for_row<Expr>>
+		row (size_t index) noexcept
+		{
+			return vector<Expr, for_row<Expr>>(static_cast<Expr&>(*this), index);
 		}
 	};
 

@@ -22,15 +22,13 @@
 #define _ELA_MATRIX_H
 
 namespace ela {
-	namespace expression {
-		template <typename Type, size_t Rows, size_t Columns>
-		struct traits<matrix<Type, Rows, Columns>>
-		{
-			typedef Type type;
-			static constexpr size_t rows = Rows;
-			static constexpr size_t columns = Columns;
-		};
-	}
+	template <typename Type, size_t Rows, size_t Columns>
+	struct expression::traits<matrix<Type, Rows, Columns>>
+	{
+		typedef Type type;
+		static constexpr size_t rows = Rows;
+		static constexpr size_t columns = Columns;
+	};
 
 	/* A matrix.
 	 *
@@ -123,18 +121,20 @@ namespace ela {
 		matrix<Type, Rows, Columns>&
 		operator = (std::initializer_list<std::initializer_list<Type>> rows) noexcept
 		{
-			std::fill_n(_buffer, Rows * Columns, 0);
+			assume(rows.size() == Rows);
 
-			size_t row_index = 0;
-			for (auto row : rows) {
-				size_t column_index = 0;
-				for (auto value : row) {
-					_buffer[column_index * Rows + row_index] = value;
+			size_t row = 0;
+			for (auto columns : rows) {
+				assume(columns.size() == Columns);
 
-					column_index++;
+				size_t column = 0;
+				for (auto element : columns) {
+					_buffer[column * Rows + row] = element;
+
+					column++;
 				}
 
-				row_index++;
+				row++;
 			}
 
 			return *this;
@@ -147,8 +147,9 @@ namespace ela {
 			matrix<Type, Rows, Columns>&>::type
 		operator = (std::initializer_list<Type> elements) noexcept
 		{
-			size_t index = 0;
+			assume(elements.size() == (R == 1) ? C : R);
 
+			size_t index = 0;
 			for (auto element : elements) {
 				_buffer[index] = element;
 				index++;

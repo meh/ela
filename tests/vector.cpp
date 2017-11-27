@@ -13,5 +13,17 @@ main (void)
 			amiequal(vec[1], 0);
 			amiequal(vec[2], 0);
 		}},
+
+		{"view", []{
+			ela::matrix<float, 3, 3> a{{1, 0, 3}, {4, 0, 6}, {7, 0, 9}};
+			a.column(1) = a.column(0) + a.column(2);
+
+			ela::column_vector<float, 3> b{1, 2, 3};
+			ela::column_vector<float, 3> c = b + a.column(1);
+
+			amiequal(5, c[0]);
+			amiequal(12, c[1]);
+			amiequal(19, c[2]);
+		}},
 	});
 }

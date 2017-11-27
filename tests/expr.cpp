@@ -47,7 +47,7 @@ main (void)
 			amiequal(a[0], b[0]);
 			amiequal(a[1], b[1]);
 			amiequal(a[2], b[2]);
-		}}
+		}},
 	});
 }
 
