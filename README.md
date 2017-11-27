@@ -19,6 +19,17 @@ intermediary objects are created unless explictly assigned to a `matrix`.
 If all your matrix values are known at compile time compilers are able to
 completely constant unfold the results most of the time.
 
+Bound checks
+------------
+Bound checks are used at any runtime indexing operation through a call to
+`assert`, if you want to disable bound checks you'll have to define `NDEBUG`.
+
+Regardless of bound checks being enabled or not an assumption is made that the
+indices do not go out of bounds, this is done through a call to
+`__builtin_unreachable`, this should be able to help the compiler optimize
+indexing.  If you want to disable this behavior make sure to define
+`ELA_NO_ASSUMPTIONS`.
+
 Examples
 ========
 ```cpp
