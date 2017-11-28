@@ -26,27 +26,19 @@
 #include <cmath>
 #include <cassert>
 
-#if !defined(ela_assert)
-#	if !defined(ELA_NO_ASSERT)
-#		define ela_assert(e) assert(e)
+#if defined(_MSVC_VER)
+#	define _ELA_ASSUME(e) __assume(e)
+#else
+#	define _ELA_ASSUME(e) if (!(e)) { __builtin_unreachable(); }
+#endif
+
+#if !defined(ELA_ASSUME)
+# if defined(NDEBUG)
+#		define ELA_ASSUME(e) _ELA_ASSUME(e)
 #	else
-#		define ela_assert(e)
+#		define ELA_ASSUME(e) assert(e)
 # endif
 #endif
-
-#if !defined(ela_assume)
-#	if !defined(ELA_NO_ASSUME)
-#		define ela_assume(e) if (!(e)) { __builtin_unreachable(); }
-#	else
-#		define ela_assume(e)
-#	endif
-#endif
-
-#define assume(e) { \
-	bool _pred = e; \
-	ela_assert(_pred); \
-	ela_assume(_pred); \
-}
 
 namespace ela {
 	namespace expression {

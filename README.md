@@ -44,23 +44,17 @@ a.column(1) = {2, 5, 8};
 ela::column_vector<float, 3> b = ~(a.row(1) * 2);
 ```
 
-Bounds checking
-===============
+Bound checking
+--------------
 Bound checks are used at any runtime indexing operation through a call to
-`ela_assert` and `ela_assume`.
+`ELA_ASSUME`.
 
-`ela_assert`
-------------
-`ela_assert` by default calls the standard `assert` macro, if you want special
-behavior from it you can define it before including ela.  Defining
-`ELA_NO_ASSERT` will disable asserts completely.
+Unless `ELA_ASSUME` is defined before `ela/ela.hpp` is included its definition
+will become an `assert` call when `NDEBUG` is not defined and a compiler
+unreachable hint when `NDEBUG` is defined.
 
-`ela_assume`
-------------
-`ela_assume` by default calls `__builtin_unreachable` in case the predicate is
-false, this is so the compiler has more information about indexing operations,
-if you want special behavior you can define it before including ela.  Defining
-`ELA_NO_ASSUME` will disable assumptions completely.
+In your custom expression implementations you're advised to call `ELA_ASSUME`
+yourself to make sure the compiler knows what's going on.
 
 Expression
 ==========

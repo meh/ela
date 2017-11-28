@@ -48,7 +48,7 @@ namespace ela { namespace expression {
 		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			assume(row <= traits<Input>::columns && column <= traits<Input>::rows);
+			ELA_ASSUME(row <= traits<Input>::columns && column <= traits<Input>::rows);
 
 			return this->_input(column, row);
 		}

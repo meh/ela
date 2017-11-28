@@ -121,11 +121,11 @@ namespace ela {
 		matrix<Type, Rows, Columns>&
 		operator = (std::initializer_list<std::initializer_list<Type>> rows) noexcept
 		{
-			assume(rows.size() == Rows);
+			ELA_ASSUME(rows.size() == Rows);
 
 			size_t row = 0;
 			for (auto columns : rows) {
-				assume(columns.size() == Columns);
+				ELA_ASSUME(columns.size() == Columns);
 
 				size_t column = 0;
 				for (auto element : columns) {
@@ -147,7 +147,7 @@ namespace ela {
 			matrix<Type, Rows, Columns>&>::type
 		operator = (std::initializer_list<Type> elements) noexcept
 		{
-			assume(elements.size() == (R == 1) ? C : R);
+			ELA_ASSUME(elements.size() == (R == 1) ? C : R);
 
 			size_t index = 0;
 			for (auto element : elements) {
@@ -194,7 +194,7 @@ namespace ela {
 		Type const&
 		operator () (size_t row, size_t column) const noexcept
 		{
-			assume(row <= Rows && column <= Columns);
+			ELA_ASSUME(row <= Rows && column <= Columns);
 
 			return _buffer[row * Columns + column];
 		}
@@ -205,7 +205,7 @@ namespace ela {
 		Type&
 		operator () (size_t row, size_t column) noexcept
 		{
-			assume(row <= Rows && column <= Columns);
+			ELA_ASSUME(row <= Rows && column <= Columns);
 
 			return _buffer[row * Columns + column];
 		}
@@ -217,7 +217,7 @@ namespace ela {
 		typename std::enable_if<R == 1 || C == 1, T const&>::type
 		operator [] (size_t index) const noexcept
 		{
-			assume(R == 1 ? index <= C : index <= R);
+			ELA_ASSUME(R == 1 ? index <= C : index <= R);
 
 			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
 		}
@@ -229,7 +229,7 @@ namespace ela {
 		typename std::enable_if<R == 1 || C == 1, T&>::type
 		operator [] (size_t index) noexcept
 		{
-			assume(R == 1 ? index <= C : index <= R);
+			ELA_ASSUME(R == 1 ? index <= C : index <= R);
 
 			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
 		}
