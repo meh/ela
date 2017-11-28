@@ -3,6 +3,47 @@ Embedded Linear Algebra [![License](https://img.shields.io/badge/License-MIT-blu
 Minimal header only linear algebra library with expression templates and low
 footprint designed to run on embedded devices.
 
+Matrix
+======
+A `matrix` is generic over the scalar type, the number of rows and the number
+of columns, dynamically sized matrices are not supported.
+
+The internal buffer is always allocated on the stack as a contiguous
+row-major array and by default is set to `0`.
+
+Vector
+======
+There are three classes of vectors, two concrete and one as a view.
+
+Column Vector
+-------------
+A `column_vector<Type, Size>` is just a type alias for `matrix<Type, Size, 1>`
+but in addition to expression access it implements direct access through the
+`[]` operator.
+
+Row Vector
+----------
+A `row_vector<Type, Size>` is just a type alias for `matrix<Type, 1, Size>` but
+in addition to expression access it implements direct access through the `[]`
+operator.
+
+Vector
+------
+A `vector` is a column or row vector view into an expression (or matrix if
+mutable access is required).
+
+### Example
+
+```cpp
+ela::matrix<float, 3, 3> a{{1, 0, 3}, {4, 0, 6}, {7, 0, 9}};
+
+// Assign a column of a matrix.
+a.column(1) = {2, 5, 8};
+
+// Scale a row of the matrix and save it as a column vector.
+ela::column_vector<float, 3> b = ~(a.row(1) * 2);
+```
+
 Expression
 ==========
 All matrix operations are implemented as expression templates so no
@@ -107,47 +148,6 @@ struct ela::expression::traits<RGB<Type>>
 
 This code will make `RGB` behave as an expression, you can look into `tests/`
 for more examples of expressions and other stuff.
-
-Matrix
-======
-A `matrix` is generic over the scalar type, the number of rows and the number
-of columns, dynamically sized matrices are not supported.
-
-The internal buffer is always allocated on the stack as a contiguous
-row-major array and by default is set to `0`.
-
-Vector
-======
-There are three classes of vectors, two concrete and one as a view.
-
-Column Vector
--------------
-A `column_vector<Type, Size>` is just a type alias for `matrix<Type, Size, 1>`
-but in addition to expression access it implements direct access through the
-`[]` operator.
-
-Row Vector
-----------
-A `row_vector<Type, Size>` is just a type alias for `matrix<Type, 1, Size>` but
-in addition to expression access it implements direct access through the `[]`
-operator.
-
-Vector
-------
-A `vector` is a column or row vector view into an expression (or matrix if
-mutable access is required).
-
-### Example
-
-```cpp
-ela::matrix<float, 3, 3> a{{1, 0, 3}, {4, 0, 6}, {7, 0, 9}};
-
-// Assign a column of a matrix.
-a.column(1) = {2, 5, 8};
-
-// Scale a row of the matrix and save it as a column vector.
-ela::column_vector<float, 3> b = ~(a.row(1) * 2);
-```
 
 Bounds checking
 ===============
