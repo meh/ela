@@ -96,9 +96,9 @@ public:
 		: r(r), g(g), b(b)
 	{ }
 
-  /* This constructor allows creating an `RGB<T>` from any compatible
+	/* This constructor allows creating an `RGB<T>` from any compatible
 	 * expression.
-   */
+	 */
 	template <typename Expr, typename T = Type>
 	RGB (Expr const& expr, typename std::enable_if<
 		3 == ela::expression::traits<Expr>::rows &&
@@ -108,8 +108,8 @@ public:
 		*this = expr;
 	}
 
-  /* This operator allows assigning any compatible expression.
-   */
+	/* This operator allows assigning any compatible expression.
+	 */
 	template <typename Expr, typename T = Type>
 	inline
 	typename std::enable_if<3 == ela::expression::traits<Expr>::rows &&
