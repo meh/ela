@@ -1,5 +1,5 @@
 CXX = clang++
-CXXFLAGS = -Wall -Wextra -Werror -Iinclude -isystem tests/amirite -std=c++11
+override CXXFLAGS += -Wall -Wextra -Werror -ggdb -Iinclude -isystem tests/amirite -std=c++11
 
 SOURCES := $(wildcard tests/*.cpp)
 DEPS := $(SOURCES:.cpp=.d)
