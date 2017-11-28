@@ -26,18 +26,27 @@
 #include <cmath>
 #include <cassert>
 
-#ifdef ELA_NO_ASSUMPTIONS
-#	define assume(predicate) { \
-		assert(predicate); \
-	}
-#else
-#	define assume(predicate) { \
-		assert(predicate); \
-			if (!(predicate)) { \
-				__builtin_unreachable(); \
-			} \
-		}
+#if !defined(ela_assert)
+#	if !defined(ELA_NO_ASSERT)
+#		define ela_assert(e) assert(e)
+#	else
+#		define ela_assert(e)
+# endif
 #endif
+
+#if !defined(ela_assume)
+#	if !defined(ELA_NO_ASSUME)
+#		define ela_assume(e) if (!(e)) { __builtin_unreachable(); }
+#	else
+#		define ela_assume(e)
+#	endif
+#endif
+
+#define assume(e) { \
+	bool _pred = e; \
+	ela_assert(_pred); \
+	ela_assume(_pred); \
+}
 
 namespace ela {
 	namespace expression {
