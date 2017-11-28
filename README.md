@@ -44,6 +44,24 @@ a.column(1) = {2, 5, 8};
 ela::column_vector<float, 3> b = ~(a.row(1) * 2);
 ```
 
+Bounds checking
+===============
+Bound checks are used at any runtime indexing operation through a call to
+`ela_assert` and `ela_assume`.
+
+`ela_assert`
+------------
+`ela_assert` by default calls the standard `assert` macro, if you want special
+behavior from it you can define it before including ela.  Defining
+`ELA_NO_ASSERT` will disable asserts completely.
+
+`ela_assume`
+------------
+`ela_assume` by default calls `__builtin_unreachable` in case the predicate is
+false, this is so the compiler has more information about indexing operations,
+if you want special behavior you can define it before including ela.  Defining
+`ELA_NO_ASSUME` will disable assumptions completely.
+
 Expression
 ==========
 All matrix operations are implemented as expression templates so no
@@ -148,14 +166,3 @@ struct ela::expression::traits<RGB<Type>>
 
 This code will make `RGB` behave as an expression, you can look into `tests/`
 for more examples of expressions and other stuff.
-
-Bounds checking
-===============
-Bound checks are used at any runtime indexing operation through a call to
-`assert`, if you want to disable asserts you'll have to define `NDEBUG`.
-
-Regardless of assertions being enabled or not an assumption is made that the
-indices do not go out of bounds, this is done through a call to
-`__builtin_unreachable`, this should be able to help the compiler optimize
-indexing.  If you want to disable this behavior make sure to define
-`ELA_NO_ASSUMPTIONS`.
