@@ -139,10 +139,10 @@ namespace ela { namespace expression {
 
 		template <size_t Row, size_t Column>
 		inline
-		typename traits<Expr>::type const&
+		typename traits<Expr>::type
 		at () const noexcept
 		{
-			static_assert(Row <= traits<Expr>::rows && Column <= traits<Expr>::columns,
+			static_assert(Row < traits<Expr>::rows && Column < traits<Expr>::columns,
 				"index out of bounds");
 
 			return static_cast<Expr const&>(*this)(Row, Column);
@@ -155,7 +155,7 @@ namespace ela { namespace expression {
 		typename std::enable_if<R == 1 || C == 1, T>::type
 		operator [] (size_t index) const noexcept
 		{
-			ELA_ASSUME(R == 1 ? index <= C : index <= R);
+			ELA_ASSUME(index < (R == 1 ? C : R));
 
 			return (R == 1)
 				? static_cast<Expr const&>(*this)(0, index)

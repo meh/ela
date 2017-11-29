@@ -92,7 +92,7 @@ namespace ela { namespace expression {
 		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			ELA_ASSUME(row <= traits<Input>::rows && column <= traits<Input>::columns);
+			ELA_ASSUME(row < traits<Input>::rows && column < traits<Input>::columns);
 
 			if (std::isnan(_determinant)) {
 				return _determinant;
@@ -125,7 +125,7 @@ namespace ela { namespace expression {
 		typename traits<Input>::type
 		get (Input const& input, size_t row, size_t column) noexcept
 		{
-			ELA_ASSUME(row <= 1 && column <= 1);
+			ELA_ASSUME(row < 2 && column < 2);
 
 			#define a input(0, 0)
 			#define b input(0, 1)
@@ -183,7 +183,7 @@ namespace ela { namespace expression {
 		typename traits<Input>::type
 		get (Input const& input, size_t row, size_t column) noexcept
 		{
-			ELA_ASSUME(row <= 2 && column <= 2);
+			ELA_ASSUME(row < 3 && column < 3);
 
 			#define a input(0, 0)
 			#define b input(0, 1)

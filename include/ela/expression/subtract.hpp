@@ -53,7 +53,7 @@ namespace ela { namespace expression {
 		typename traits<Left>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			ELA_ASSUME(row <= traits<Left>::rows && column <= traits<Left>::columns);
+			ELA_ASSUME(row < traits<Left>::rows && column < traits<Left>::columns);
 
 			return this->_left(row, column) - this->_right(row, column);
 		}
