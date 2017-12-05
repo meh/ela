@@ -52,14 +52,14 @@ namespace ela {
 		for_column (size_t column) noexcept
 			: _column(column)
 		{
-			ELA_ASSUME(column <= expression::traits<Input>::columns);
+			ELA_ASSUME(column < expression::traits<Input>::columns);
 		}
 
 		inline
 		typename expression::traits<Input>::type const&
 		get (Input const& input, size_t index) const noexcept
 		{
-			ELA_ASSUME(index <= expression::traits<Input>::rows);
+			ELA_ASSUME(index < expression::traits<Input>::rows);
 
 			return input(index, _column);
 		}
@@ -68,7 +68,7 @@ namespace ela {
 		typename expression::traits<Input>::type&
 		get (Input& input, size_t index) noexcept
 		{
-			ELA_ASSUME(index <= expression::traits<Input>::rows);
+			ELA_ASSUME(index < expression::traits<Input>::rows);
 
 			return input(index, _column);
 		}
@@ -113,14 +113,14 @@ namespace ela {
 		for_row (size_t row) noexcept
 			: _row(row)
 		{
-			ELA_ASSUME(row <= expression::traits<Input>::rows);
+			ELA_ASSUME(row < expression::traits<Input>::rows);
 		}
 
 		inline
 		typename expression::traits<Input>::type const&
 		get (Input const& input, size_t index) const noexcept
 		{
-			ELA_ASSUME(index <= expression::traits<Input>::columns);
+			ELA_ASSUME(index < expression::traits<Input>::columns);
 
 			return input(_row, index);
 		}
@@ -129,7 +129,7 @@ namespace ela {
 		typename expression::traits<Input>::type&
 		get (Input& input, size_t index) noexcept
 		{
-			ELA_ASSUME(index <= expression::traits<Input>::columns);
+			ELA_ASSUME(index < expression::traits<Input>::columns);
 
 			return input(_row, index);
 		}
