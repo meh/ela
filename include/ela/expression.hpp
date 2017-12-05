@@ -145,7 +145,14 @@ namespace ela { namespace expression {
 			static_assert(Row < traits<Expr>::rows && Column < traits<Expr>::columns,
 				"index out of bounds");
 
-			return static_cast<Expr const&>(*this)(Row, Column);
+			return at(Row, Column);
+		}
+
+		inline
+		typename traits<Expr>::type
+		at (size_t row, size_t column) const noexcept
+		{
+			return static_cast<Expr const&>(*this)(row, column);
 		}
 
 		/* Access a scalar at the given index, only available for expressions returning vectors.
@@ -162,11 +169,33 @@ namespace ela { namespace expression {
 				: static_cast<Expr const&>(*this)(index, 0);
 		}
 
+		template <size_t Index>
+		inline
+		vector<Expr, for_column<Expr>>
+		column () noexcept
+		{
+			static_assert(Index < traits<Expr>::columns,
+				"index out of bounds");
+
+			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), Index);
+		}
+
 		inline
 		vector<Expr, for_column<Expr>>
 		column (size_t index) noexcept
 		{
 			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), index);
+		}
+
+		template <size_t Index>
+		inline
+		vector<Expr, for_row<Expr>>
+		row () noexcept
+		{
+			static_assert(Index < traits<Expr>::rows,
+				"index out of bounds");
+
+			return vector<Expr, for_row<Expr>>(static_cast<Expr&>(*this), Index);
 		}
 
 		inline
