@@ -177,6 +177,9 @@ namespace ela {
 			return *this;
 		}
 
+		/* Access a scalar at the given row and column, bounds checked at compile
+		 * time.
+		 */
 		template <size_t Row, size_t Column>
 		inline
 		Type const&
@@ -188,6 +191,9 @@ namespace ela {
 			return (*this)(Row, Column);
 		}
 
+		/* Access a scalar at the given row and column, bounds checked at compile
+		 * time.
+		 */
 		template <size_t Row, size_t Column>
 		inline
 		Type&
