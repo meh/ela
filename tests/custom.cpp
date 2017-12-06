@@ -50,7 +50,7 @@ public:
 	/* This is the expression access operator.
 	 */
 	inline
-	Type const&
+	Type
 	operator () (size_t row, size_t column) const noexcept
 	{
 		assert(row < 3 && column == 0);
