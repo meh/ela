@@ -1,4 +1,4 @@
-CXX = clang++
+CXX ?= clang++
 override CXXFLAGS += -Wall -Wextra -Werror -ggdb -Iinclude -isystem tests/amirite -std=c++11
 
 SOURCES := $(wildcard tests/*.cpp)
