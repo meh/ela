@@ -147,7 +147,7 @@ namespace ela {
 			matrix<Type, Rows, Columns>&>::type
 		operator = (std::initializer_list<Type> elements) noexcept
 		{
-			ELA_ASSUME(elements.size() == (R == 1) ? C : R);
+			ELA_ASSUME(elements.size() == (R == 1 ? C : R));
 
 			size_t index = 0;
 			for (auto element : elements) {
