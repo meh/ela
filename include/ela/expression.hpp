@@ -137,6 +137,9 @@ namespace ela { namespace expression {
 			return !(*this == other);
 		}
 
+		/* Access a scalar at the given coordinates with compile-time bound
+		 * checking.
+		 */
 		template <size_t Row, size_t Column>
 		inline
 		typename traits<Expr>::type
@@ -148,6 +151,8 @@ namespace ela { namespace expression {
 			return at(Row, Column);
 		}
 
+		/* Access a scalar at the given coordinates.
+		 */
 		inline
 		typename traits<Expr>::type
 		at (size_t row, size_t column) const noexcept
@@ -155,7 +160,8 @@ namespace ela { namespace expression {
 			return static_cast<Expr const&>(*this)(row, column);
 		}
 
-		/* Access a scalar at the given index, only available for expressions returning vectors.
+		/* Access a scalar at the given index, only available for expressions
+		 * returning vectors.
 		 */
 		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
 		inline
@@ -169,6 +175,9 @@ namespace ela { namespace expression {
 				: static_cast<Expr const&>(*this)(index, 0);
 		}
 
+		/* Access the column vector at the given index with compile-time bound
+		 * checking.
+		 */
 		template <size_t Index>
 		inline
 		vector<Expr, for_column<Expr>>
@@ -180,6 +189,8 @@ namespace ela { namespace expression {
 			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), Index);
 		}
 
+		/* Access the column vector at the given index.
+		 */
 		inline
 		vector<Expr, for_column<Expr>>
 		column (size_t index) noexcept
@@ -187,6 +198,9 @@ namespace ela { namespace expression {
 			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), index);
 		}
 
+		/* Access the row vector at the given index with compile-time bound
+		 * checking.
+		 */
 		template <size_t Index>
 		inline
 		vector<Expr, for_row<Expr>>
@@ -198,6 +212,8 @@ namespace ela { namespace expression {
 			return vector<Expr, for_row<Expr>>(static_cast<Expr&>(*this), Index);
 		}
 
+		/* Access the row vector at the given index.
+		 */
 		inline
 		vector<Expr, for_row<Expr>>
 		row (size_t index) noexcept
