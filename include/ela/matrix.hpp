@@ -22,13 +22,15 @@
 #define _ELA_MATRIX_H
 
 namespace ela {
-	template <typename Type, size_t Rows, size_t Columns>
-	struct expression::traits<matrix<Type, Rows, Columns>>
-	{
-		typedef Type type;
-		static constexpr size_t rows = Rows;
-		static constexpr size_t columns = Columns;
-	};
+	namespace expression {
+		template <typename Type, size_t Rows, size_t Columns>
+		struct traits<matrix<Type, Rows, Columns>>
+		{
+			typedef Type type;
+			static constexpr size_t rows = Rows;
+			static constexpr size_t columns = Columns;
+		};
+	}
 
 	/* A matrix.
 	 *

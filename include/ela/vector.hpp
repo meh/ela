@@ -32,13 +32,15 @@ namespace ela {
 	template <typename Type, size_t Columns>
 	using row_vector = matrix<Type, 1, Columns>;
 
-	template <typename Input>
-	struct expression::traits<vector<Input, for_column<Input>>>
-	{
-		typedef typename expression::traits<Input>::type type;
-		static constexpr size_t rows = expression::traits<Input>::rows;
-		static constexpr size_t columns = 1;
-	};
+	namespace expression {
+		template <typename Input>
+		struct traits<vector<Input, for_column<Input>>>
+		{
+			typedef typename traits<Input>::type type;
+			static constexpr size_t rows = traits<Input>::rows;
+			static constexpr size_t columns = 1;
+		};
+	}
 
 	template <typename Input>
 	class for_column
@@ -93,13 +95,15 @@ namespace ela {
 		size_t _column;
 	};
 
-	template <typename Input>
-	struct expression::traits<vector<Input, for_row<Input>>>
-	{
-		typedef typename expression::traits<Input>::type type;
-		static constexpr size_t rows = 1;
-		static constexpr size_t columns = expression::traits<Input>::columns;
-	};
+	namespace expression {
+		template <typename Input>
+		struct traits<vector<Input, for_row<Input>>>
+		{
+			typedef typename traits<Input>::type type;
+			static constexpr size_t rows = 1;
+			static constexpr size_t columns = traits<Input>::columns;
+		};
+	}
 
 	template <typename Input>
 	class for_row
