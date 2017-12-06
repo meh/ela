@@ -85,7 +85,7 @@ namespace ela { namespace expression {
 		 */
 		static constexpr size_t columns = 1;
 	};
-}
+} }
 
 int
 main (void)
