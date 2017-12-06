@@ -67,23 +67,25 @@ public:
 	}
 };
 
-/* This defines the experssion traits for `RGB<T>`.
- */
-template <typename Type>
-struct ela::expression::traits<RGB<Type>>
-{
-	/* This is always the scalar type.
+namespace ela { namespace expression {
+	/* This defines the experssion traits for `RGB<T>`.
 	 */
-	typedef Type type;
+	template <typename Type>
+	struct traits<RGB<Type>>
+	{
+		/* This is always the scalar type.
+		 */
+		typedef Type type;
 
-	/* This is the number of rows the expression will produce.
-	 */
-	static constexpr size_t rows = 3;
+		/* This is the number of rows the expression will produce.
+		 */
+		static constexpr size_t rows = 3;
 
-	/* This is the number of columns the expression will produce.
-	 */
-	static constexpr size_t columns = 1;
-};
+		/* This is the number of columns the expression will produce.
+		 */
+		static constexpr size_t columns = 1;
+	};
+}
 
 int
 main (void)
