@@ -149,7 +149,7 @@ namespace ela { namespace expression {
 		/* Access a scalar at the given coordinates with compile-time bound
 		 * checking.
 		 */
-		template <size_t Row, size_t Column = -1>
+		template <size_t Row, size_t Column>
 		inline
 		typename traits<Expr>::type
 		at () const noexcept
