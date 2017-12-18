@@ -48,6 +48,12 @@ namespace ela {
 		template <typename Expr>
 		class base;
 
+		template <typename Expr>
+		class operators;
+
+		template <typename Expr>
+		class accessors;
+
 		template <typename Expr, typename Input>
 		class unary;
 

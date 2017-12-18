@@ -44,7 +44,11 @@ namespace ela { namespace expression {
 	 * expression-like types.
 	 */
 	template <typename Expr>
-	class base
+	class base: public operators<Expr>, public accessors<Expr>
+	{ };
+
+	template <typename Expr>
+	class operators
 	{
 	public:
 		/* Create an addition expression.
@@ -136,11 +140,16 @@ namespace ela { namespace expression {
 		{
 			return !(*this == other);
 		}
+	};
 
+	template <typename Expr>
+	class accessors
+	{
+	public:
 		/* Access a scalar at the given coordinates with compile-time bound
 		 * checking.
 		 */
-		template <size_t Row, size_t Column>
+		template <size_t Row, size_t Column = -1>
 		inline
 		typename traits<Expr>::type
 		at () const noexcept
@@ -160,6 +169,20 @@ namespace ela { namespace expression {
 			return static_cast<Expr const&>(*this)(row, column);
 		}
 
+		/* Access a scalar at the given coordinates.
+		 */
+		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
+		inline
+		typename std::enable_if<R == 1 || C == 1, T>::type
+		at (size_t index) const noexcept
+		{
+			ELA_ASSUME(index < (R == 1 ? C : R));
+
+			return (R == 1)
+				? static_cast<Expr const&>(*this)(0, index)
+				: static_cast<Expr const&>(*this)(index, 0);
+		}
+
 		/* Access a scalar at the given index, only available for expressions
 		 * returning vectors.
 		 */
@@ -168,11 +191,7 @@ namespace ela { namespace expression {
 		typename std::enable_if<R == 1 || C == 1, T>::type
 		operator [] (size_t index) const noexcept
 		{
-			ELA_ASSUME(index < (R == 1 ? C : R));
-
-			return (R == 1)
-				? static_cast<Expr const&>(*this)(0, index)
-				: static_cast<Expr const&>(*this)(index, 0);
+			return at<T, R, C>(index);
 		}
 
 		/* Access the column vector at the given index with compile-time bound
