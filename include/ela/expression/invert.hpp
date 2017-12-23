@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_EXPRESSION_INVERT_H
-#define _ELA_EXPRESSION_INVERT_H
+#ifndef ELA_EXPRESSION_INVERT_H
+#define ELA_EXPRESSION_INVERT_H
 
 namespace ela { namespace expression {
 	template <typename Input>

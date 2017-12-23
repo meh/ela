@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_MATRIX_H
-#define _ELA_MATRIX_H
+#ifndef ELA_MATRIX_H
+#define ELA_MATRIX_H
 
 namespace ela {
 	namespace expression {

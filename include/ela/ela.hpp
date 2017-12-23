@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_H
-#define _ELA_H
+#ifndef ELA_H
+#define ELA_H
 
 #include <algorithm>
 #include <initializer_list>
@@ -27,14 +27,14 @@
 #include <cassert>
 
 #if defined(_MSVC_VER)
-#	define _ELA_ASSUME(e) __assume(e)
+#	define ELA_ASSUME_(e) __assume(e)
 #else
-#	define _ELA_ASSUME(e) if (!(e)) { __builtin_unreachable(); }
+#	define ELA_ASSUME_(e) if (!(e)) { __builtin_unreachable(); }
 #endif
 
 #if !defined(ELA_ASSUME)
 # if defined(NDEBUG)
-#		define ELA_ASSUME(e) _ELA_ASSUME(e)
+#		define ELA_ASSUME(e) ELA_ASSUME_(e)
 #	else
 #		define ELA_ASSUME(e) assert(e)
 # endif

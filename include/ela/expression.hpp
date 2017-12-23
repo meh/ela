@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_EXPRESSION_H
-#define _ELA_EXPRESSION_H
+#ifndef ELA_EXPRESSION_H
+#define ELA_EXPRESSION_H
 
 namespace ela { namespace expression {
 	/* Traits for expressions.

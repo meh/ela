@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_VECTOR_H
-#define _ELA_VECTOR_H
+#ifndef ELA_VECTOR_H
+#define ELA_VECTOR_H
 
 namespace ela {
 	/* A column vector.

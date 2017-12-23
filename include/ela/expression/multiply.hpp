@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_EXPR_MUL_H
-#define _ELA_EXPR_MUL_H
+#ifndef ELA_EXPR_MUL_H
+#define ELA_EXPR_MUL_H
 
 namespace ela { namespace expression {
 	template <typename Left, typename Right>

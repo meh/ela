@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_UTIL_H
-#define _ELA_UTIL_H
+#ifndef ELA_UTIL_H
+#define ELA_UTIL_H
 
 #include <iostream>
 #include <ela/ela.hpp>
