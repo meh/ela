@@ -68,8 +68,7 @@ namespace ela {
 			expression::base<matrix<Type, Rows, Columns>>::operator=(rows);
 		}
 
-		template <size_t R = Rows, size_t C = Columns>
-		matrix (std::initializer_list<Type> elements, typename std::enable_if<R == 1 || C == 1>::type* = 0) noexcept
+		matrix (std::initializer_list<Type> elements) noexcept
 		{
 			expression::base<matrix<Type, Rows, Columns>>::operator=(elements);
 		}

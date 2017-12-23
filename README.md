@@ -79,44 +79,42 @@ We'll implement a generic RGB type as if it were a column vector.
  * data.
  */
 template <typename Type>
-struct __attribute__ ((packed)) RGB: ela::expression::base<RGB<Type>>
+struct RGB: public ela::expression::base<RGB<Type>>
 {
+public:
+	using ela::expression::base<RGB<Type>>::operator =;
+
 public:
 	Type r = 0;
 	Type g = 0;
 	Type b = 0;
 
-	RGB (Type r, Type g, Type b)
+	/* Create an empty color.
+	 */
+	RGB () noexcept
+	{ }
+
+	RGB (Type r, Type g, Type b) noexcept
 		: r(r), g(g), b(b)
 	{ }
 
-	/* This constructor allows creating an `RGB<T>` from any compatible
-	 * expression.
-	 */
-	template <typename Expr, typename T = Type>
-	RGB (Expr const& expr, typename std::enable_if<
-		3 == ela::expression::traits<Expr>::rows &&
-		1 == ela::expression::traits<Expr>::columns &&
-		std::is_same<T, typename ela::expression::traits<Expr>::type>::value>::type* = 0) noexcept
+	template <typename Input, typename T = Type>
+	RGB (Input const& expr, typename std::enable_if<
+		3 == ela::expression::traits<Input>::rows &&
+		1 == ela::expression::traits<Input>::columns &&
+		std::is_same<T, typename ela::expression::traits<Input>::type>::value>::type* = 0) noexcept
 	{
-		*this = expr;
+		ela::expression::base<RGB<Type>>::operator=(expr);
 	}
 
-	/* This operator allows assigning any compatible expression.
-	 */
-	template <typename Expr, typename T = Type>
-	inline
-	typename std::enable_if<3 == ela::expression::traits<Expr>::rows &&
-	                        1 == ela::expression::traits<Expr>::columns &&
-	                        std::is_same<T, typename ela::expression::traits<Expr>::type>::value,
-	RGB<Type>&>::type
-	operator = (Expr const& expr) noexcept
+	RGB (std::initializer_list<std::initializer_list<Type>> elements) noexcept
 	{
-		r = expr(0, 0);
-		g = expr(1, 0);
-		b = expr(2, 0);
+		ela::expression::base<RGB<Type>>::operator=(elements);
+	}
 
-		return *this;
+	RGB (std::initializer_list<Type> elements) noexcept
+	{
+		ela::expression::base<RGB<Type>>::operator=(elements);
 	}
 
 	/* This is the expression access operator.
@@ -125,7 +123,26 @@ public:
 	Type const&
 	operator () (size_t row, size_t column) const noexcept
 	{
-		assert(row < 3 && column == 0);
+		ELA_ASSUME(row < 3 && column == 0);
+
+		if (row == 0) {
+			return r;
+		}
+		else if (row == 1) {
+			return g;
+		}
+		else {
+			return b;
+		}
+	}
+
+	/* This is the expression access operator.
+	 */
+	inline
+	Type&
+	operator () (size_t row, size_t column) noexcept
+	{
+		ELA_ASSUME(row < 3 && column == 0);
 
 		if (row == 0) {
 			return r;
@@ -139,23 +156,30 @@ public:
 	}
 };
 
-/* This defines the experssion traits for `RGB<T>`.
- */
-template <typename Type>
-struct ela::expression::traits<RGB<Type>>
-{
-	/* This is always the scalar type.
+namespace ela { namespace expression {
+	/* This defines the experssion traits for `RGB<T>`.
 	 */
-	typedef Type type;
+	template <typename Type>
+	struct traits<RGB<Type>>
+	{
+		/* This is always the scalar type.
+		 */
+		typedef Type type;
 
-	/* This is the number of rows the expression will produce.
-	 */
-	static constexpr size_t rows = 3;
+		/* This is the number of rows the expression will produce.
+		 */
+		static constexpr size_t rows = 3;
 
-	/* This is the number of columns the expression will produce.
-	 */
-	static constexpr size_t columns = 1;
-};
+		/* This is the number of columns the expression will produce.
+		 */
+		static constexpr size_t columns = 1;
+
+		/* This says the expression can return references.
+		 */
+		static constexpr bool concrete = true;
+	};
+} }
+
 ```
 
 This code will make `RGB` behave as an expression, you can look into `tests/`

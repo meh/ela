@@ -17,8 +17,6 @@ public:
 	Type g = 0;
 	Type b = 0;
 
-	/* Create an empty color.
-	 */
 	RGB () noexcept
 	{ }
 
@@ -35,6 +33,11 @@ public:
 		ela::expression::base<RGB<Type>>::operator=(expr);
 	}
 
+	RGB (std::initializer_list<std::initializer_list<Type>> elements) noexcept
+	{
+		ela::expression::base<RGB<Type>>::operator=(elements);
+	}
+
 	RGB (std::initializer_list<Type> elements) noexcept
 	{
 		ela::expression::base<RGB<Type>>::operator=(elements);
@@ -46,7 +49,7 @@ public:
 	Type const&
 	operator () (size_t row, size_t column) const noexcept
 	{
-		assert(row < 3 && column == 0);
+		ELA_ASSUME(row < 3 && column == 0);
 
 		if (row == 0) {
 			return r;
@@ -65,7 +68,7 @@ public:
 	Type&
 	operator () (size_t row, size_t column) noexcept
 	{
-		assert(row < 3 && column == 0);
+		ELA_ASSUME(row < 3 && column == 0);
 
 		if (row == 0) {
 			return r;

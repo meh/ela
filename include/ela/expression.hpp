@@ -321,41 +321,17 @@ namespace ela { namespace expression {
 				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
 					"index out of bounds");
 
-				return at(Row, Column);
+				return static_cast<Self const&>(*this)(Row, Column);
 			}
 
-			/* Access a scalar at the given coordinates.
+			/* Access a scalar at the given row-major index.
 			 */
 			inline
 			typename traits<Self>::type
-			at (size_t row, size_t column) const noexcept
-			{
-				return static_cast<Self const&>(*this)(row, column);
-			}
-
-			/* Access a scalar at the given coordinates.
-			 */
-			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
-			inline
-			typename std::enable_if<R == 1 || C == 1, T>::type
-			at (size_t index) const noexcept
-			{
-				ELA_ASSUME(index < (R == 1 ? C : R));
-
-				return (R == 1)
-					? static_cast<Self const&>(*this)(0, index)
-					: static_cast<Self const&>(*this)(index, 0);
-			}
-
-			/* Access a scalar at the given index, only available for expressions
-			 * returning vectors.
-			 */
-			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
-			inline
-			typename std::enable_if<R == 1 || C == 1, T>::type
 			operator [] (size_t index) const noexcept
 			{
-				return at<T, R, C>(index);
+				return static_cast<Self const&>(*this)(
+					index % traits<Self>::rows, index / traits<Self>::rows);
 			}
 		};
 
@@ -373,7 +349,7 @@ namespace ela { namespace expression {
 				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
 					"index out of bounds");
 
-				return at(Row, Column);
+				return static_cast<Self const&>(*this)(Row, Column);
 			}
 
 			/* Access a scalar at the given coordinates with compile-time bound
@@ -387,75 +363,29 @@ namespace ela { namespace expression {
 				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
 					"index out of bounds");
 
-				return at(Row, Column);
-			}
-
-			/* Access a scalar at the given coordinates.
-			 */
-			inline
-			typename traits<Self>::type const&
-			at (size_t row, size_t column) const noexcept
-			{
-				return static_cast<Self const&>(*this)(row, column);
-			}
-
-			/* Access a scalar at the given coordinates.
-			 */
-			inline
-			typename traits<Self>::type&
-			at (size_t row, size_t column) noexcept
-			{
-				return static_cast<Self&>(*this)(row, column);
-			}
-
-			/* Access a scalar at the given coordinates.
-			 */
-			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
-			inline
-			typename std::enable_if<R == 1 || C == 1, T>::type const&
-			at (size_t index) const noexcept
-			{
-				ELA_ASSUME(index < (R == 1 ? C : R));
-
-				return (R == 1)
-					? static_cast<Self const&>(*this)(0, index)
-					: static_cast<Self const&>(*this)(index, 0);
-			}
-
-			/* Access a scalar at the given coordinates.
-			 */
-			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
-			inline
-			typename std::enable_if<R == 1 || C == 1, T>::type&
-			at (size_t index) noexcept
-			{
-				ELA_ASSUME(index < (R == 1 ? C : R));
-
-				return (R == 1)
-					? static_cast<Self&>(*this)(0, index)
-					: static_cast<Self&>(*this)(index, 0);
+				return static_cast<Self&>(*this)(Row, Column);
 			}
 
 			/* Access a scalar at the given index, only available for expressions
 			 * returning vectors.
 			 */
-			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
 			inline
-			typename std::enable_if<R == 1 || C == 1, T>::type const&
+			typename traits<Self>::type
 			operator [] (size_t index) const noexcept
 			{
-				return at<T, R, C>(index);
+				return static_cast<Self const&>(*this)(
+					index % traits<Self>::rows, index / traits<Self>::rows);
 			}
 
 			/* Access a scalar at the given index, only available for expressions
 			 * returning vectors.
 			 */
-			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
 			inline
-			typename std::enable_if<R == 1 || C == 1, T>::type&
+			typename traits<Self>::type
 			operator [] (size_t index) noexcept
 			{
-				return at<T, R, C>(index);
+				return static_cast<Self&>(*this)(
+					index % traits<Self>::rows, index / traits<Self>::rows);
 			}
 		};
 
@@ -493,16 +423,15 @@ namespace ela { namespace expression {
 
 			/* Copy the data from the initializer list, only for vectors.
 			 */
-			template <size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
 			inline
-			typename std::enable_if<R == 1 || C == 1, Self&>::type
+			Self&
 			operator = (std::initializer_list<typename traits<Self>::type> elements) noexcept
 			{
-				ELA_ASSUME(elements.size() == (R == 1 ? C : R));
+				ELA_ASSUME(elements.size() == traits<Self>::rows * traits<Self>::columns);
 
 				size_t index = 0;
 				for (auto element : elements) {
-					static_cast<Self&>(*this)[index] = element;
+					static_cast<Self&>(*this)(index % traits<Self>::rows, index / traits<Self>::rows) = element;
 					index++;
 				}
 
