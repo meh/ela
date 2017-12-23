@@ -28,12 +28,13 @@ namespace ela { namespace expression {
 		typedef typename traits<Left>::type type;
 		static constexpr size_t rows = traits<Left>::rows;
 		static constexpr size_t columns = traits<Left>::columns;
+		static constexpr bool concrete = false;
 	};
 
 	/* Addition expression.
 	 */
 	template <typename Left, typename Right>
-	class add : public binary<add<Left, Right>, Left, Right>
+	class add : public binary<add<Left, Right>, Left const&, Right const&>
 	{
 		static_assert(
 			traits<Left>::rows == traits<Right>::rows &&
@@ -44,7 +45,7 @@ namespace ela { namespace expression {
 		/* Create a new addition expression.
 		 */
 		add (Left const& left, Right const& right) noexcept
-			: binary<add<Left, Right>, Left, Right>(left, right)
+			: binary<add<Left, Right>, Left const&, Right const&>(left, right)
 		{ }
 
 		/* Access the added scalar at the given index.

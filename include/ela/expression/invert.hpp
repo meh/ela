@@ -28,6 +28,7 @@ namespace ela { namespace expression {
 		typedef typename traits<Input>::type type;
 		static constexpr size_t rows = traits<Input>::rows;
 		static constexpr size_t columns = traits<Input>::columns;
+		static constexpr bool concrete = false;
 	};
 
 	/* Matrix inversion implementations for various matrix dimensions.
@@ -60,7 +61,7 @@ namespace ela { namespace expression {
 	/* Inversion expression.
 	 */
 	template <typename Input>
-	class invert : public unary<invert<Input>, Input>
+	class invert : public unary<invert<Input>, Input const&>
 	{
 		static_assert(traits<Input>::rows == traits<Input>::columns,
 			"only square matrices are invertible");
@@ -69,7 +70,7 @@ namespace ela { namespace expression {
 		/* Create a new scaling expression.
 		 */
 		invert (Input const& input) noexcept
-			: unary<invert<Input>, Input>(input)
+			: unary<invert<Input>, Input const&>(input)
 		{
 			_determinant = inversion<Input, traits<Input>::rows>::determinant(input);
 

@@ -45,19 +45,27 @@ namespace ela {
 		template <typename Expr>
 		struct traits;
 
-		template <typename Expr>
-		class base;
+		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
+		struct base;
 
-		template <typename Expr>
-		class operators;
+		namespace derive {
+			template <typename Self>
+			struct operators;
 
-		template <typename Expr>
-		class accessors;
+			template <typename Self, bool Concrete = traits<Self>::concrete>
+			struct vectors;
 
-		template <typename Expr, typename Input>
+			template <typename Self, bool Concrete = traits<Self>::concrete>
+			struct accessors;
+
+			template <typename Self, bool Concrete = traits<Self>::concrete>
+			struct assignment;
+		}
+
+		template <typename Self, typename Input>
 		class unary;
 
-		template <typename Expr, typename Left, typename Right>
+		template <typename Self, typename Left, typename Right>
 		class binary;
 
 		template <typename Left, typename Right>
@@ -72,7 +80,7 @@ namespace ela {
 		template <typename Input>
 		class scale;
 
-		template <typename Input>
+		template <typename Input, bool Concrete = traits<Input>::concrete>
 		class transpose;
 
 		template <typename Input, size_t Dimension>
@@ -82,17 +90,24 @@ namespace ela {
 		class invert;
 	}
 
-	template <typename Type, size_t Rows, size_t Columns>
+	template <typename Type, size_t Rows, size_t Columns = Rows>
 	class matrix;
 
-	template <typename Input>
+	template <typename Input, bool Concrete = expression::traits<Input>::concrete>
 	class for_column;
 
-	template <typename Input>
+	template <typename Input, bool Concrete = expression::traits<Input>::concrete>
 	class for_row;
 
-	template <typename Expr, typename Accessor>
+	template <typename Expr, typename Accessor, bool Concrete = expression::traits<Expr>::concrete>
 	class vector;
+
+	template <typename Expr>
+	struct is_expr
+	{
+		static constexpr bool value =
+			!std::is_void<typename expression::traits<Expr>::type>::value;
+	};
 }
 
 #include "expression.hpp"

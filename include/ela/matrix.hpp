@@ -29,6 +29,7 @@ namespace ela {
 			typedef Type type;
 			static constexpr size_t rows = Rows;
 			static constexpr size_t columns = Columns;
+			static constexpr bool concrete = true;
 		};
 	}
 
@@ -40,171 +41,85 @@ namespace ela {
 	class matrix: public expression::base<matrix<Type, Rows, Columns>>
 	{
 	public:
+		using expression::base<matrix<Type, Rows, Columns>>::operator =;
+
+	public:
 		/* Create an empty matrix.
 		 */
 		matrix () noexcept
 		{ }
 
-		/* Create an identity matrix with the given value.
-		 */
-		template <size_t R = Rows, size_t C = Columns>
-		matrix (Type value, typename std::enable_if<R == C>::type* = 0) noexcept
+		matrix (Type value) noexcept
 		{
-			for (size_t i = 0; i < Rows; i++) {
-				_buffer[i * Rows + i] = value;
-			}
+			std::fill_n(_buffer, Rows * Columns, value);
 		}
 
-		/* Create a matrix from the given expression.
-		 */
-		template <typename Expr, typename T = Type, size_t R = Rows, size_t C = Columns>
-		matrix (Expr const& expr, typename std::enable_if<
-			R == expression::traits<Expr>::rows &&
-			C == expression::traits<Expr>::columns &&
-			std::is_same<T, typename expression::traits<Expr>::type>::value>::type* = 0) noexcept
+		template <typename Input, typename T = Type, size_t R = Rows, size_t C = Columns>
+		matrix (Input const& expr, typename std::enable_if<
+			R == expression::traits<Input>::rows &&
+			C == expression::traits<Input>::columns &&
+			std::is_same<T, typename expression::traits<Input>::type>::value>::type* = 0) noexcept
 		{
-			*this = expr;
+			expression::base<matrix<Type, Rows, Columns>>::operator=(expr);
 		}
 
-		/* Create a matrix from another matrix, copying the data.
-		 */
-		matrix (matrix<Type, Rows, Columns> const& from) noexcept
-		{
-			*this = from;
-		}
-
-		/* Create a matrix from an initializer list.
-		 */
 		matrix (std::initializer_list<std::initializer_list<Type>> rows) noexcept
 		{
-			*this = rows;
+			expression::base<matrix<Type, Rows, Columns>>::operator=(rows);
 		}
 
-		/* Create a vector from an initializer list.
-		 */
 		template <size_t R = Rows, size_t C = Columns>
 		matrix (std::initializer_list<Type> elements, typename std::enable_if<R == 1 || C == 1>::type* = 0) noexcept
 		{
-			*this = elements;
+			expression::base<matrix<Type, Rows, Columns>>::operator=(elements);
 		}
 
-		/* Create a matrix from a pointer, copying the data.
-		 */
-		matrix (const Type* buffer) noexcept
-		{
-			*this = buffer;
-		}
-
-		/* Copy the contents of the matrix.
-		 */
-		inline
-		matrix<Type, Rows, Columns>&
-		operator = (matrix<Type, Rows, Columns> const& from) noexcept
-		{
-			std::copy(&from, &from + Rows * Columns, _buffer);
-
-			return *this;
-		}
-
-		/* Copy the data present in the pointer.
-		 */
-		inline
-		matrix<Type, Rows, Columns>&
-		operator = (const Type* data) noexcept
-		{
-			std::copy(data, data + Rows * Columns, _buffer);
-
-			return *this;
-		}
-
-		/* Copy the data from the initializer list.
-		 */
-		inline
-		matrix<Type, Rows, Columns>&
-		operator = (std::initializer_list<std::initializer_list<Type>> rows) noexcept
-		{
-			ELA_ASSUME(rows.size() == Rows);
-
-			size_t row = 0;
-			for (auto columns : rows) {
-				ELA_ASSUME(columns.size() == Columns);
-
-				size_t column = 0;
-				for (auto element : columns) {
-					_buffer[row * Columns + column] = element;
-
-					column++;
-				}
-
-				row++;
-			}
-
-			return *this;
-		}
-
-		/* Copy the data from the initializer list, only for vectors.
+		/* Create an identity matrix with the given value.
 		 */
 		template <size_t R = Rows, size_t C = Columns>
-		typename std::enable_if<R == 1 || C == 1,
-			matrix<Type, Rows, Columns>&>::type
-		operator = (std::initializer_list<Type> elements) noexcept
+		static inline
+		typename std::enable_if<R == C, matrix<Type, Rows, Columns>>::type
+		identity () noexcept
 		{
-			ELA_ASSUME(elements.size() == (R == 1 ? C : R));
+			matrix<Type, Rows, Columns> result;
 
-			size_t index = 0;
-			for (auto element : elements) {
-				_buffer[index] = element;
-				index++;
+			for (size_t i = 0; i < Rows; i++) {
+				result(i, i) = 1;
 			}
 
-			return *this;
+			return result;
 		}
 
-		/* Copy the data from the expression.
+		/* Create a scaling matrix with the given values.
 		 */
-		template <typename Expr, typename T = Type, size_t R = Rows, size_t C = Columns>
-		inline
-		typename std::enable_if<R == expression::traits<Expr>::rows &&
-		                        C == expression::traits<Expr>::columns &&
-		                        std::is_same<T, typename expression::traits<Expr>::type>::value,
-		matrix<Type, Rows, Columns>&>::type
-		operator = (Expr const& expr) noexcept
+		template <size_t R = Rows, size_t C = Columns>
+		static inline
+		typename std::enable_if<R == C && (R == 3 || R == 4), matrix<Type, Rows, Columns>>::type
+		scaling (Type x, Type y, Type z) noexcept
 		{
-			for (size_t row = 0; row < Rows; row++) {
-				for (size_t column = 0; column < Columns; column++) {
-					_buffer[row * Columns + column] = expr(row, column);
-				}
-			}
+			auto result = identity();
 
-			return *this;
+			result(0, 0) = x;
+			result(1, 1) = y;
+			result(2, 2) = z;
+
+			return result;
 		}
 
-		/* Access a scalar at the given row and column, bounds checked at compile
-		 * time.
+		/* Create an identity matrix with the given value.
 		 */
-		template <size_t Row, size_t Column>
-		inline
-		Type const&
-		at () const noexcept
+		template <size_t R = Rows, size_t C = Columns>
+		static inline
+		typename std::enable_if<R == C && (R == 3 || R == 4), matrix<Type, Rows, Columns>>::type
+		scaling (Type x) noexcept
 		{
-			static_assert(Row < Rows && Column < Columns,
-				"index out of bounds");
+			auto result = identity();
 
-			return (*this)(Row, Column);
-		}
+			result(0, 0) = x;
+			result(1, 1) = x;
+			result(2, 2) = x;
 
-		/* Access a scalar at the given row and column, bounds checked at compile
-		 * time.
-		 */
-		template <size_t Row, size_t Column>
-		inline
-		Type&
-		at () noexcept
-		{
-			static_assert(Row < Rows && Column < Columns,
-				"index out of bounds");
-
-			return (*this)(Row, Column);
+			return result;
 		}
 
 		/* Access a scalar at the given row and column.
@@ -227,74 +142,6 @@ namespace ela {
 			ELA_ASSUME(row < Rows && column < Columns);
 
 			return _buffer[row * Columns + column];
-		}
-
-		/* Access a scalar at the given index, only available for vectors.
-		 */
-		template <typename T = Type, size_t R = Rows, size_t C = Columns>
-		inline
-		typename std::enable_if<R == 1 || C == 1, T const&>::type
-		operator [] (size_t index) const noexcept
-		{
-			ELA_ASSUME(index < (R == 1 ? C : R));
-
-			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
-		}
-
-		/* Access a scalar at the given index, only available for vectors.
-		 */
-		template <typename T = Type, size_t R = Rows, size_t C = Columns>
-		inline
-		typename std::enable_if<R == 1 || C == 1, T&>::type
-		operator [] (size_t index) noexcept
-		{
-			ELA_ASSUME(index < (R == 1 ? C : R));
-
-			return (Rows == 1) ? (*this)(0, index) : (*this)(index, 0);
-		}
-
-		/* Add the resulting expression in place.
-		 */
-		template <typename Right>
-		inline
-		matrix<Type, Rows, Columns>&
-		operator += (Right const& other) noexcept
-		{
-			*this = *this + other;
-			return *this;
-		}
-
-		/* Subtract the resulting expression in place.
-		 */
-		template <typename Right>
-		inline
-		matrix<Type, Rows, Columns>&
-		operator -= (Right const& other) noexcept
-		{
-			*this = *this - other;
-			return *this;
-		}
-
-		/* Multiply the resulting expression in place.
-		 */
-		template <typename Right>
-		inline
-		matrix<Type, Rows, Columns>&
-		operator *= (Right const& other) noexcept
-		{
-			*this = *this * other;
-			return *this;
-		}
-
-		/* Multiply the resulting expression in place.
-		 */
-		template <typename Right>
-		inline
-		matrix<Type, Rows, Columns>&
-		operator *= (Type other) noexcept
-		{
-			*this = *this * other;
-			return *this;
 		}
 
 		/* Return the wrapped raw pointer (row major).

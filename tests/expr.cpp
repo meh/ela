@@ -1,6 +1,7 @@
 #include <iostream>
 #include <amirite>
 #include <ela/ela.hpp>
+#include <ela/util.hpp>
 
 int
 main (void)
@@ -47,6 +48,14 @@ main (void)
 			amiequal(a[0], b[0]);
 			amiequal(a[1], b[1]);
 			amiequal(a[2], b[2]);
+		}},
+
+		{"transpose (mutable)", []{
+			ela::matrix<float, 3> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+			amiequal(a(0, 2), 3);
+			(~a)(2, 0) = 42;
+			amiequal(a(0, 2), 42);
 		}},
 	});
 }

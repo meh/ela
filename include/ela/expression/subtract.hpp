@@ -28,12 +28,13 @@ namespace ela { namespace expression {
 		typedef typename traits<Left>::type type;
 		static constexpr size_t rows = traits<Left>::rows;
 		static constexpr size_t columns = traits<Left>::columns;
+		static constexpr bool concrete = false;
 	};
 
 	/* Subtraction expression.
 	 */
 	template <typename Left, typename Right>
-	class subtract : public binary<subtract<Left, Right>, Left, Right>
+	class subtract : public binary<subtract<Left, Right>, Left const&, Right const&>
 	{
 		static_assert(
 			traits<Left>::rows == traits<Right>::rows &&
@@ -44,7 +45,7 @@ namespace ela { namespace expression {
 		/* Create a new subtraction expression.
 		 */
 		subtract (Left const& left, Right const& right) noexcept
-			: binary<subtract<Left, Right>, Left, Right>(left, right)
+			: binary<subtract<Left, Right>, Left const&, Right const&>(left, right)
 		{ }
 
 		/* Access the subtracted scalar at the given index.

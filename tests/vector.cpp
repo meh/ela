@@ -25,5 +25,11 @@ main (void)
 			amiequal(12, c[1]);
 			amiequal(19, c[2]);
 		}},
+
+		{"view (expr)", []{
+			ela::matrix<float, 3, 3> a{{1, 0, 3}, {4, 0, 6}, {7, 0, 9}};
+
+			amiequal(2, (a * 2).column(0)[0]);
+		}},
 	});
 }

@@ -25,10 +25,10 @@ namespace ela { namespace expression {
 	template <typename Left, typename Right>
 	struct traits<multiply<Left, Right>>
 	{
-		public:
-			typedef typename traits<Left>::type type;
-			static constexpr size_t rows = traits<Left>::rows;
-			static constexpr size_t columns = traits<Right>::columns;
+		typedef typename traits<Left>::type type;
+		static constexpr size_t rows = traits<Left>::rows;
+		static constexpr size_t columns = traits<Right>::columns;
+		static constexpr bool concrete = false;
 	};
 
 	/* Multiplication expression.

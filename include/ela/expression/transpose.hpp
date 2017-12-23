@@ -28,18 +28,19 @@ namespace ela { namespace expression {
 		typedef typename traits<Input>::type type;
 		static constexpr size_t rows = traits<Input>::columns;
 		static constexpr size_t columns = traits<Input>::rows;
+		static constexpr bool concrete = traits<Input>::concrete;
 	};
 
 	/* Transposition expression, swaps rows with columns.
 	 */
 	template <typename Input>
-	class transpose : public unary<transpose<Input>, Input>
+	class transpose<Input, false>: public unary<transpose<Input>, Input const&>
 	{
 	public:
 		/* Create a new transposition expression.
 		 */
 		transpose (Input const& input) noexcept
-			: unary<transpose<Input>, Input>(input)
+			: unary<transpose<Input>, Input const&>(input)
 		{ }
 
 		/* Access the transposed scalar at the given index.
@@ -47,6 +48,41 @@ namespace ela { namespace expression {
 		inline
 		typename traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept
+		{
+			ELA_ASSUME(row <= traits<Input>::columns && column <= traits<Input>::rows);
+
+			return this->_input(column, row);
+		}
+	};
+
+	/* Transposition expression, swaps rows with columns.
+	 */
+	template <typename Input>
+	class transpose<Input, true>: public unary<transpose<Input>, Input&>
+	{
+	public:
+		/* Create a new transposition expression.
+		 */
+		transpose (Input& input) noexcept
+			: unary<transpose<Input>, Input&>(input)
+		{ }
+
+		/* Access the transposed scalar at the given index.
+		 */
+		inline
+		typename traits<Input>::type const&
+		operator () (size_t row, size_t column) const noexcept
+		{
+			ELA_ASSUME(row <= traits<Input>::columns && column <= traits<Input>::rows);
+
+			return this->_input(column, row);
+		}
+
+		/* Access the transposed scalar at the given index.
+		 */
+		inline
+		typename traits<Input>::type&
+		operator () (size_t row, size_t column) noexcept
 		{
 			ELA_ASSUME(row <= traits<Input>::columns && column <= traits<Input>::rows);
 

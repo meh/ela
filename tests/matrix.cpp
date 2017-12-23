@@ -1,6 +1,7 @@
 #include <iostream>
 #include <amirite>
 #include <ela/ela.hpp>
+#include <ela/util.hpp>
 
 int
 main (void)
@@ -23,7 +24,7 @@ main (void)
 		}},
 
 		{"identity", []{
-			ela::matrix<float, 3, 3> mat(1.0);
+			auto mat = ela::matrix<float, 3, 3>::identity();
 
 			amiequal(mat(0, 0), 1.0);
 			amiequal(mat(1, 1), 1.0);
@@ -45,8 +46,9 @@ main (void)
 		}},
 
 		{"add", []{
-			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<float, 3, 3> b(1.0);
+			auto a = ela::matrix<float, 3, 3> { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } };
+			auto b = ela::matrix<float, 3, 3>::identity();
+
 			ela::matrix<float, 3, 3> c = a + b;
 
 			amiequal(c(0, 0), 2.0);
@@ -62,27 +64,9 @@ main (void)
 			amiequal(c(2, 2), 10.0);
 		}},
 
-		{"add in place", []{
-			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<float, 3, 3> b(1.0);
-			a += b;
-
-			amiequal(a(0, 0), 2.0);
-			amiequal(a(0, 1), 2.0);
-			amiequal(a(0, 2), 3.0);
-
-			amiequal(a(1, 0), 4.0);
-			amiequal(a(1, 1), 6.0);
-			amiequal(a(1, 2), 6.0);
-
-			amiequal(a(2, 0), 7.0);
-			amiequal(a(2, 1), 8.0);
-			amiequal(a(2, 2), 10.0);
-		}},
-
 		{"subtract", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<float, 3, 3> b(1.0);
+			ela::matrix<float, 3, 3> b = ela::matrix<float, 3, 3>::identity();
 			ela::matrix<float, 3, 3> c = a - b;
 
 			amiequal(c(0, 0), 0.0);
@@ -98,27 +82,9 @@ main (void)
 			amiequal(c(2, 2), 8.0);
 		}},
 
-		{"subtract in palce", []{
-			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<float, 3, 3> b(1.0);
-			a -= b;
-
-			amiequal(a(0, 0), 0.0);
-			amiequal(a(0, 1), 2.0);
-			amiequal(a(0, 2), 3.0);
-
-			amiequal(a(1, 0), 4.0);
-			amiequal(a(1, 1), 4.0);
-			amiequal(a(1, 2), 6.0);
-
-			amiequal(a(2, 0), 7.0);
-			amiequal(a(2, 1), 8.0);
-			amiequal(a(2, 2), 8.0);
-		}},
-
 		{"multiply", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<float, 3, 3> b(2.0);
+			ela::matrix<float, 3, 3> b = ela::matrix<float, 3, 3>::scaling(2.0);
 			ela::matrix<float, 3, 3> c = a * b;
 
 			amiequal(c(0, 0), 2.0);
@@ -132,24 +98,6 @@ main (void)
 			amiequal(c(2, 0), 14.0);
 			amiequal(c(2, 1), 16.0);
 			amiequal(c(2, 2), 18.0);
-		}},
-
-		{"multiply in place", []{
-			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
-			ela::matrix<float, 3, 3> b(2.0);
-			a *= b;
-
-			amiequal(a(0, 0), 2.0);
-			amiequal(a(0, 1), 4.0);
-			amiequal(a(0, 2), 6.0);
-
-			amiequal(a(1, 0), 8.0);
-			amiequal(a(1, 1), 10.0);
-			amiequal(a(1, 2), 12.0);
-
-			amiequal(a(2, 0), 14.0);
-			amiequal(a(2, 1), 16.0);
-			amiequal(a(2, 2), 18.0);
 		}},
 
 		{"scale", []{
@@ -170,7 +118,8 @@ main (void)
 		}},
 
 		{"transpose", []{
-			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> a;
+			a = { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } };
 			ela::matrix<float, 3, 3> b = ~a;
 
 			amiequal(b(0, 0), 1.0);

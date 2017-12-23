@@ -24,12 +24,17 @@
 namespace ela { namespace expression {
 	/* Traits for expressions.
 	 */
-	template <typename Expr>
+	template <typename Self>
 	struct traits
 	{
 		/* The scalar type.
 		 */
 		typedef void type;
+
+		/* Whether the expression is concrete or not, concrete expressions have
+		 * backing storage.
+		 */
+		static constexpr bool concrete = false;
 
 		/* The number of rows.
 		 */
@@ -40,255 +45,554 @@ namespace ela { namespace expression {
 		static constexpr size_t columns = 0;
 	};
 
+	namespace derive {
+		template <typename Self>
+		struct operators
+		{
+			/* Create an addition expression.
+			 */
+			template <typename Other>
+			inline
+			add<Self, Other>
+			operator + (Other const& other) const noexcept
+			{
+				return add<Self, Other>(static_cast<Self const&>(*this), other);
+			}
+
+			/* Create a subtraction expression.
+			 */
+			template <typename Other>
+			inline
+			subtract<Self, Other>
+			operator - (Other const& other) const noexcept
+			{
+				return subtract<Self, Other>(static_cast<Self const&>(*this), other);
+			}
+
+			/* Create a multiplication expression.
+			 */
+			template <typename Other>
+			inline
+			typename std::enable_if<!std::is_same<typename traits<Other>::type, void>::value,
+			multiply<Self, Other>>::type
+			operator * (Other const& other) const noexcept
+			{
+				return multiply<Self, Other>(static_cast<Self const&>(*this), other);
+			}
+
+			/* Create a multiplication expression.
+			 */
+			inline
+			scale<Self>
+			operator * (typename traits<Self>::type value) const noexcept
+			{
+				return scale<Self>(static_cast<Self const&>(*this), value);
+			}
+
+			/* Create a transpose expression.
+			 */
+			inline
+			transpose<Self>
+			operator ~ () const noexcept
+			{
+				return transpose<Self>(static_cast<Self const&>(*this));
+			}
+
+			/* Create a transpose expression.
+			 */
+			inline
+			transpose<Self>
+			operator ~ () noexcept
+			{
+				return transpose<Self>(static_cast<Self&>(*this));
+			}
+
+			/* Create an inversion expression.
+			 */
+			inline
+			invert<Self>
+			operator ! () const noexcept
+			{
+				return invert<Self>(static_cast<Self const&>(*this));
+			}
+
+			/* Check two expressions yield the same result.
+			 */
+			template <typename Other>
+			inline
+			bool
+			operator == (Other const& other) const noexcept
+			{
+				if (traits<Self>::rows != traits<Other>::rows || traits<Self>::columns != traits<Other>::columns) {
+					return false;
+				}
+
+				for (size_t row = 0; row < traits<Self>::rows; row++) {
+					for (size_t column = 0; column < traits<Self>::columns; column++) {
+						if (static_cast<Self const&>(*this)(row, column) != other(row, column)) {
+							return false;
+						}
+					}
+				}
+
+				return true;
+			}
+
+			/* Check two expressions do not yield the same result.
+			 */
+			template <typename Other>
+			inline
+			bool
+			operator != (Other const& other) const noexcept
+			{
+				return !(*this == other);
+			}
+		};
+
+		template <typename Self>
+		struct vectors<Self, false>
+		{
+			/* Access the column vector at the given index with compile-time bound
+			 * checking.
+			 */
+			template <size_t Index>
+			inline
+			vector<Self, for_column<Self, false>, false>
+			column () const noexcept
+			{
+				static_assert(Index < traits<Self>::columns,
+					"index out of bounds");
+
+				return vector<Self, for_column<Self, false>, false>(
+					static_cast<Self const&>(*this), Index);
+			}
+
+			/* Access the column vector at the given index.
+			 */
+			inline
+			vector<Self, for_column<Self, false>, false>
+			column (size_t index) const noexcept
+			{
+				return vector<Self, for_column<Self, false>, false>(
+					static_cast<Self const&>(*this), index);
+			}
+
+			/* Access the row vector at the given index with compile-time bound
+			 * checking.
+			 */
+			template <size_t Index>
+			inline
+			vector<Self, for_row<Self>>
+			row () const noexcept
+			{
+				static_assert(Index < traits<Self>::rows,
+					"index out of bounds");
+
+				return vector<Self, for_row<Self, false>, false>(
+					static_cast<Self const&>(*this), Index);
+			}
+
+			/* Access the row vector at the given index.
+			 */
+			inline
+			vector<Self, for_row<Self>>
+			row (size_t index) const noexcept
+			{
+				return vector<Self, for_row<Self, false>, false>(
+					static_cast<Self const&>(*this), index);
+			}
+		};
+
+		template <typename Self>
+		struct vectors<Self, true>
+		{
+			/* Access the column vector at the given index with compile-time bound
+			 * checking.
+			 */
+			template <size_t Index>
+			inline
+			vector<Self, for_column<Self, false>, false>
+			column () const noexcept
+			{
+				static_assert(Index < traits<Self>::columns,
+					"index out of bounds");
+
+				return vector<Self, for_column<Self, false>, false>(
+					static_cast<Self const&>(*this), Index);
+			}
+
+			/* Access the column vector at the given index.
+			 */
+			inline
+			vector<Self, for_column<Self, false>, false>
+			column (size_t index) const noexcept
+			{
+				return vector<Self, for_column<Self, false>, false>(
+					static_cast<Self const&>(*this), index);
+			}
+
+			/* Access the column vector at the given index with compile-time bound
+			 * checking.
+			 */
+			template <size_t Index>
+			inline
+			vector<Self, for_column<Self, true>, true>
+			column () noexcept
+			{
+				static_assert(Index < traits<Self>::columns,
+					"index out of bounds");
+
+				return vector<Self, for_column<Self, true>, true>(
+					static_cast<Self&>(*this), Index);
+			}
+
+			/* Access the column vector at the given index.
+			 */
+			inline
+			vector<Self, for_column<Self, true>, true>
+			column (size_t index) noexcept
+			{
+				return vector<Self, for_column<Self, true>, true>(
+					static_cast<Self&>(*this), index);
+			}
+
+			/* Access the row vector at the given index with compile-time bound
+			 * checking.
+			 */
+			template <size_t Index>
+			inline
+			vector<Self, for_row<Self>>
+			row () const noexcept
+			{
+				static_assert(Index < traits<Self>::rows,
+					"index out of bounds");
+
+				return vector<Self, for_row<Self, false>, false>(
+					static_cast<Self const&>(*this), Index);
+			}
+
+			/* Access the row vector at the given index.
+			 */
+			inline
+			vector<Self, for_row<Self>>
+			row (size_t index) const noexcept
+			{
+				return vector<Self, for_row<Self, false>, false>(
+					static_cast<Self const&>(*this), index);
+			}
+
+			/* Access the row vector at the given index with compile-time bound
+			 * checking.
+			 */
+			template <size_t Index>
+			inline
+			vector<Self, for_row<Self, true>, true>
+			row () noexcept
+			{
+				static_assert(Index < traits<Self>::rows,
+					"index out of bounds");
+
+				return vector<Self, for_row<Self, true>, true>(
+					static_cast<Self&>(*this), Index);
+			}
+
+			/* Access the row vector at the given index.
+			 */
+			inline
+			vector<Self, for_row<Self, true>, true>
+			row (size_t index) noexcept
+			{
+				return vector<Self, for_row<Self, true>, true>(
+					static_cast<Self&>(*this), index);
+			}
+		};
+
+		template <typename Self>
+		struct accessors<Self, false>
+		{
+			/* Access a scalar at the given coordinates with compile-time bound
+			 * checking.
+			 */
+			template <size_t Row, size_t Column>
+			inline
+			typename traits<Self>::type
+			at () const noexcept
+			{
+				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
+					"index out of bounds");
+
+				return at(Row, Column);
+			}
+
+			/* Access a scalar at the given coordinates.
+			 */
+			inline
+			typename traits<Self>::type
+			at (size_t row, size_t column) const noexcept
+			{
+				return static_cast<Self const&>(*this)(row, column);
+			}
+
+			/* Access a scalar at the given coordinates.
+			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, T>::type
+			at (size_t index) const noexcept
+			{
+				ELA_ASSUME(index < (R == 1 ? C : R));
+
+				return (R == 1)
+					? static_cast<Self const&>(*this)(0, index)
+					: static_cast<Self const&>(*this)(index, 0);
+			}
+
+			/* Access a scalar at the given index, only available for expressions
+			 * returning vectors.
+			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, T>::type
+			operator [] (size_t index) const noexcept
+			{
+				return at<T, R, C>(index);
+			}
+		};
+
+		template <typename Self>
+		struct accessors<Self, true>
+		{
+			/* Access a scalar at the given coordinates with compile-time bound
+			 * checking.
+			 */
+			template <size_t Row, size_t Column>
+			inline
+			typename traits<Self>::type const&
+			at () const noexcept
+			{
+				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
+					"index out of bounds");
+
+				return at(Row, Column);
+			}
+
+			/* Access a scalar at the given coordinates with compile-time bound
+			 * checking.
+			 */
+			template <size_t Row, size_t Column>
+			inline
+			typename traits<Self>::type
+			at () noexcept
+			{
+				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
+					"index out of bounds");
+
+				return at(Row, Column);
+			}
+
+			/* Access a scalar at the given coordinates.
+			 */
+			inline
+			typename traits<Self>::type const&
+			at (size_t row, size_t column) const noexcept
+			{
+				return static_cast<Self const&>(*this)(row, column);
+			}
+
+			/* Access a scalar at the given coordinates.
+			 */
+			inline
+			typename traits<Self>::type&
+			at (size_t row, size_t column) noexcept
+			{
+				return static_cast<Self&>(*this)(row, column);
+			}
+
+			/* Access a scalar at the given coordinates.
+			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, T>::type const&
+			at (size_t index) const noexcept
+			{
+				ELA_ASSUME(index < (R == 1 ? C : R));
+
+				return (R == 1)
+					? static_cast<Self const&>(*this)(0, index)
+					: static_cast<Self const&>(*this)(index, 0);
+			}
+
+			/* Access a scalar at the given coordinates.
+			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, T>::type&
+			at (size_t index) noexcept
+			{
+				ELA_ASSUME(index < (R == 1 ? C : R));
+
+				return (R == 1)
+					? static_cast<Self&>(*this)(0, index)
+					: static_cast<Self&>(*this)(index, 0);
+			}
+
+			/* Access a scalar at the given index, only available for expressions
+			 * returning vectors.
+			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, T>::type const&
+			operator [] (size_t index) const noexcept
+			{
+				return at<T, R, C>(index);
+			}
+
+			/* Access a scalar at the given index, only available for expressions
+			 * returning vectors.
+			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, T>::type&
+			operator [] (size_t index) noexcept
+			{
+				return at<T, R, C>(index);
+			}
+		};
+
+		template <typename Self, bool Concrete>
+		struct assignment
+		{ };
+
+		template <typename Self>
+		struct assignment<Self, true>
+		{
+			/* Copy the data from the initializer list.
+			 */
+			inline
+			Self&
+			operator = (std::initializer_list<std::initializer_list<typename traits<Self>::type>> rows) noexcept
+			{
+				ELA_ASSUME(rows.size() == traits<Self>::rows);
+
+				size_t row = 0;
+				for (auto columns : rows) {
+					ELA_ASSUME(columns.size() == traits<Self>::columns);
+
+					size_t column = 0;
+					for (auto element : columns) {
+						static_cast<Self&>(*this)(row, column) = element;
+
+						column++;
+					}
+
+					row++;
+				}
+
+				return static_cast<Self&>(*this);
+			}
+
+			/* Copy the data from the initializer list, only for vectors.
+			 */
+			template <size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == 1 || C == 1, Self&>::type
+			operator = (std::initializer_list<typename traits<Self>::type> elements) noexcept
+			{
+				ELA_ASSUME(elements.size() == (R == 1 ? C : R));
+
+				size_t index = 0;
+				for (auto element : elements) {
+					static_cast<Self&>(*this)[index] = element;
+					index++;
+				}
+
+				return static_cast<Self&>(*this);
+			}
+
+			/* Copy the data from the expression.
+			 */
+			template <typename Input, typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
+			inline
+			typename std::enable_if<R == traits<Input>::rows &&
+		                          C == traits<Input>::columns &&
+		                          std::is_same<T, typename traits<Input>::type>::value,
+			Self&>::type
+			operator = (Input const& input) noexcept
+			{
+				for (size_t row = 0; row < traits<Self>::rows; row++) {
+					for (size_t column = 0; column < traits<Self>::columns; column++) {
+						static_cast<Self&>(*this)(row, column) = input(row, column);
+					}
+				}
+
+				return static_cast<Self&>(*this);
+			}
+		};
+	}
+
 	/* Base expression type, defines common operators to all expressions and
 	 * expression-like types.
 	 */
-	template <typename Expr>
-	class base: public operators<Expr>, public accessors<Expr>
+	template <typename Self>
+	struct base<Self, false>: public derive::operators<Self>,
+	                          public derive::vectors<Self>,
+	                          public derive::accessors<Self>
 	{ };
 
-	template <typename Expr>
-	class operators
+	template <typename Self>
+	struct base<Self, true>: public derive::operators<Self>,
+	                         public derive::vectors<Self>,
+	                         public derive::accessors<Self>,
+	                         public derive::assignment<Self>
 	{
-	public:
-		/* Create an addition expression.
-		 */
-		template <typename Right>
-		inline
-		add<Expr, Right>
-		operator + (Right const& other) const noexcept
-		{
-			return add<Expr, Right>(static_cast<Expr const&>(*this), other);
-		}
-
-		/* Create a subtraction expression.
-		 */
-		template <typename Right>
-		inline
-		subtract<Expr, Right>
-		operator - (Right const& other) const noexcept
-		{
-			return subtract<Expr, Right>(static_cast<Expr const&>(*this), other);
-		}
-
-		/* Create a multiplication expression.
-		 */
-		template <typename Right>
-		inline
-		typename std::enable_if<!std::is_same<typename traits<Right>::type, void>::value,
-		multiply<Expr, Right>>::type
-		operator * (Right const& other) const noexcept
-		{
-			return multiply<Expr, Right>(static_cast<Expr const&>(*this), other);
-		}
-
-		/* Create a multiplication expression.
-		 */
-		inline
-		scale<Expr>
-		operator * (typename traits<Expr>::type value) const noexcept
-		{
-			return scale<Expr>(static_cast<Expr const&>(*this), value);
-		}
-
-		/* Create a transpose expression.
-		 */
-		inline
-		transpose<Expr>
-		operator ~ () const noexcept
-		{
-			return transpose<Expr>(static_cast<Expr const&>(*this));
-		}
-
-		/* Create an inversion expression.
-		 */
-		inline
-		invert<Expr>
-		operator ! () const noexcept
-		{
-			return invert<Expr>(static_cast<Expr const&>(*this));
-		}
-
-		/* Check two expressions yield the same result.
-		 */
-		template <typename Right>
-		inline
-		bool
-		operator == (Right const& other) const noexcept
-		{
-			if (traits<Expr>::rows != traits<Right>::rows || traits<Expr>::columns != traits<Right>::columns) {
-				return false;
-			}
-
-			for (size_t row = 0; row < traits<Expr>::rows; row++) {
-				for (size_t column = 0; column < traits<Expr>::columns; column++) {
-					if (static_cast<Expr const&>(*this)(row, column) != other(row, column)) {
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
-		/* Check two expressions do not yield the same result.
-		 */
-		template <typename Right>
-		inline
-		bool
-		operator != (Right const& other) const noexcept
-		{
-			return !(*this == other);
-		}
-	};
-
-	template <typename Expr>
-	class accessors
-	{
-	public:
-		/* Access a scalar at the given coordinates with compile-time bound
-		 * checking.
-		 */
-		template <size_t Row, size_t Column>
-		inline
-		typename traits<Expr>::type
-		at () const noexcept
-		{
-			static_assert(Row < traits<Expr>::rows && Column < traits<Expr>::columns,
-				"index out of bounds");
-
-			return at(Row, Column);
-		}
-
-		/* Access a scalar at the given coordinates.
-		 */
-		inline
-		typename traits<Expr>::type
-		at (size_t row, size_t column) const noexcept
-		{
-			return static_cast<Expr const&>(*this)(row, column);
-		}
-
-		/* Access a scalar at the given coordinates.
-		 */
-		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
-		inline
-		typename std::enable_if<R == 1 || C == 1, T>::type
-		at (size_t index) const noexcept
-		{
-			ELA_ASSUME(index < (R == 1 ? C : R));
-
-			return (R == 1)
-				? static_cast<Expr const&>(*this)(0, index)
-				: static_cast<Expr const&>(*this)(index, 0);
-		}
-
-		/* Access a scalar at the given index, only available for expressions
-		 * returning vectors.
-		 */
-		template <typename T = typename traits<Expr>::type, size_t R = traits<Expr>::rows, size_t C = traits<Expr>::columns>
-		inline
-		typename std::enable_if<R == 1 || C == 1, T>::type
-		operator [] (size_t index) const noexcept
-		{
-			return at<T, R, C>(index);
-		}
-
-		/* Access the column vector at the given index with compile-time bound
-		 * checking.
-		 */
-		template <size_t Index>
-		inline
-		vector<Expr, for_column<Expr>>
-		column () noexcept
-		{
-			static_assert(Index < traits<Expr>::columns,
-				"index out of bounds");
-
-			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), Index);
-		}
-
-		/* Access the column vector at the given index.
-		 */
-		inline
-		vector<Expr, for_column<Expr>>
-		column (size_t index) noexcept
-		{
-			return vector<Expr, for_column<Expr>>(static_cast<Expr&>(*this), index);
-		}
-
-		/* Access the row vector at the given index with compile-time bound
-		 * checking.
-		 */
-		template <size_t Index>
-		inline
-		vector<Expr, for_row<Expr>>
-		row () noexcept
-		{
-			static_assert(Index < traits<Expr>::rows,
-				"index out of bounds");
-
-			return vector<Expr, for_row<Expr>>(static_cast<Expr&>(*this), Index);
-		}
-
-		/* Access the row vector at the given index.
-		 */
-		inline
-		vector<Expr, for_row<Expr>>
-		row (size_t index) noexcept
-		{
-			return vector<Expr, for_row<Expr>>(static_cast<Expr&>(*this), index);
-		}
+		using derive::assignment<Self, true>::operator =;
 	};
 
 	/* Unary expressions.
 	 */
-	template <typename Expr, typename Input>
-	class unary: public base<Expr>
+	template <typename Self, typename Input>
+	class unary: public base<Self>
 	{
 	public:
 		/* The type of the input expression.
 		 */
-		typedef Input input;
+		typedef typename std::remove_reference<typename std::remove_cv<Input>::type>::type input;
 
 	protected:
 		/* Create a new unary expression.
 		 */
-		unary (Input const& input) noexcept
+		unary (Input input) noexcept
 			: _input(input)
 		{ }
 
 	protected:
-		Input const& _input;
+		Input _input;
 	};
 
 	/* Binary expressions.
 	 */
-	template <typename Expr, typename Left, typename Right>
-	class binary: public base<Expr>
+	template <typename Self, typename Left, typename Right>
+	class binary: public base<Self>
 	{
-		static_assert(std::is_same<typename traits<Left>::type, typename traits<Right>::type>::value,
-			"type mismatch");
-
 	public:
 		/* The type of the left hand side expression.
 		 */
-		typedef Left left;
+		typedef typename std::remove_reference<typename std::remove_cv<Left>::type>::type left;
 
 		/* The type of the right hand side expression.
 		 */
-		typedef Right right;
+		typedef typename std::remove_reference<typename std::remove_cv<Left>::type>::type right;
 
 	protected:
 		/* Create a new binary expression.
 		 */
-		binary (Left const& left, Right const& right) noexcept
+		binary (Left left, Right right) noexcept
 			: _left(left), _right(right)
 		{ }
 
 	protected:
-		Left const&  _left;
-		Right const& _right;
+		Left  _left;
+		Right _right;
 	};
 } }
 

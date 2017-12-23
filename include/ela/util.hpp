@@ -18,44 +18,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _ELA_EXPRESSION_SCALE_H
-#define _ELA_EXPRESSION_SCALE_H
+#ifndef _ELA_UTIL_H
+#define _ELA_UTIL_H
 
-namespace ela { namespace expression {
-	template <typename Left>
-	struct traits<scale<Left>>
-	{
-		typedef typename traits<Left>::type type;
-		static constexpr size_t rows = traits<Left>::rows;
-		static constexpr size_t columns = traits<Left>::columns;
-		static constexpr bool concrete = false;
-	};
+#include <iostream>
+#include <ela/ela.hpp>
 
-	/* Scaling expression.
-	 */
-	template <typename Left>
-	class scale : public binary<scale<Left>, Left const&, typename traits<Left>::type>
-	{
-	public:
+template <typename Expr>
+typename std::enable_if<ela::is_expr<Expr>::value, std::ostream>::type&
+operator << (std::ostream& out, Expr const& me) {
+	for (size_t row = 0; row < ela::expression::traits<Expr>::rows; row++) {
+		for (size_t column = 0; column < ela::expression::traits<Expr>::columns; column++) {
+			out << me(row, column);
 
-	public:
-		/* Create a new scaling expression.
-		 */
-		scale (Left const& left, typename traits<Left>::type right) noexcept
-			: binary<scale<Left>, Left const&, typename traits<Left>::type>(left, right)
-		{ }
-
-		/* Access the scaled scalar at the given index.
-		 */
-		inline
-		typename traits<Left>::type
-		operator () (size_t row, size_t column) const noexcept
-		{
-			ELA_ASSUME(row < traits<Left>::rows && column < traits<Left>::columns);
-
-			return this->_left(row, column) * this->_right;
+			if (column + 1 != ela::expression::traits<Expr>::columns) {
+				out << "\t";
+			}
 		}
-	};
-} }
+
+		if (row + 1 != ela::expression::traits<Expr>::rows) {
+			out << std::endl;
+		}
+	}
+
+	return out;
+}
 
 #endif
