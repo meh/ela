@@ -24,6 +24,7 @@
 #include <memory>
 #include <algorithm>
 #include <initializer_list>
+#include <iterator>
 #include <cmath>
 #include <cassert>
 
@@ -42,6 +43,7 @@
 #include "forward.hpp"
 #include "order.hpp"
 #include "storage.hpp"
+#include "iterator.hpp"
 #include "expression.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"

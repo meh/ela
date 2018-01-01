@@ -26,6 +26,16 @@ main (void)
 			amiequal(c, d);
 		}},
 
+		{"stack", []{
+			ela::matrix<float, 3, 3,
+				ela::storage::specifier<ela::storage::stack, ela::storage::row_major>> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+			ela::matrix<float, 3, 3,
+				ela::storage::specifier<ela::storage::stack, ela::storage::column_major>> b = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+			amiequal(a, b);
+		}},
+
 		{"allocator", []{
 			ela::column_vector<float, 3,
 				ela::storage::specifier<ela::storage::allocator<std::allocator>>> a = {1, 2, 3};

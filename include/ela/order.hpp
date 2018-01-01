@@ -28,6 +28,8 @@ namespace ela { namespace order {
 		size_t
 		index (size_t row, size_t column) noexcept
 		{
+			ELA_ASSUME(row < Rows && column < Columns);
+
 			return row * Columns + column;
 		}
 
@@ -36,6 +38,8 @@ namespace ela { namespace order {
 		std::pair<size_t, size_t>
 		index (size_t index) noexcept
 		{
+			ELA_ASSUME(index < Rows * Columns);
+
 			return std::make_pair(index / Columns, index % Columns);
 		}
 	};
@@ -49,6 +53,8 @@ namespace ela { namespace order {
 		size_t
 		index (size_t row, size_t column) noexcept
 		{
+			ELA_ASSUME(row < Rows && column < Columns);
+
 			return column * Rows + row;
 		}
 
@@ -57,6 +63,8 @@ namespace ela { namespace order {
 		std::pair<size_t, size_t>
 		index (size_t index) noexcept
 		{
+			ELA_ASSUME(index < Rows * Columns);
+
 			return std::make_pair(index % Rows, index / Rows);
 		}
 	};

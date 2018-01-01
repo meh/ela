@@ -285,6 +285,80 @@ namespace ela { namespace expression {
 		};
 
 		template <typename Self>
+		struct iterators<Self, false>
+		{
+			template <typename Order = order::row_major>
+			inline
+			iterator::wrapper<Self, iterator::elements<Self, Order, false>>
+			elements () const noexcept
+			{
+				return static_cast<Self const&>(*this);
+			}
+
+			inline
+			iterator::wrapper<Self, iterator::rows<Self, false>>
+			rows () const noexcept
+			{
+				return static_cast<Self const&>(*this);
+			}
+
+			inline
+			iterator::wrapper<Self, iterator::columns<Self, false>>
+			columns () const noexcept
+			{
+				return static_cast<Self const&>(*this);
+			}
+		};
+
+		template <typename Self>
+		struct iterators<Self, true>
+		{
+			template <typename Order = order::row_major>
+			inline
+			iterator::wrapper<Self, iterator::elements<Self, Order, false>>
+			elements () const noexcept
+			{
+				return static_cast<Self const&>(*this);
+			}
+
+			template <typename Order = order::row_major>
+			inline
+			iterator::wrapper<Self, iterator::elements<Self, Order, true>, iterator::elements<Self, Order, false>>
+			elements () noexcept
+			{
+				return static_cast<Self&>(*this);
+			}
+
+			inline
+			iterator::wrapper<Self, iterator::rows<Self, false>>
+			rows () const noexcept
+			{
+				return static_cast<Self const&>(*this);
+			}
+
+			inline
+			iterator::wrapper<Self, iterator::rows<Self, true>, iterator::rows<Self, false>>
+			rows () noexcept
+			{
+				return static_cast<Self&>(*this);
+			}
+
+			inline
+			iterator::wrapper<Self, iterator::columns<Self, false>>
+			columns () const noexcept
+			{
+				return static_cast<Self const&>(*this);
+			}
+
+			inline
+			iterator::wrapper<Self, iterator::columns<Self, true>, iterator::columns<Self, false>>
+			columns () noexcept
+			{
+				return static_cast<Self&>(*this);
+			}
+		};
+
+		template <typename Self>
 		struct accessors<Self, false>
 		{
 			/* Access a scalar at the given coordinates with compile-time bound
@@ -453,16 +527,18 @@ namespace ela { namespace expression {
 	 * expression-like types.
 	 */
 	template <typename Self>
-	struct base<Self, false>: public derive::operators<Self>,
-	                          public derive::vectors<Self>,
-	                          public derive::accessors<Self>
+	struct base<Self, false> : public derive::operators<Self>,
+	                           public derive::vectors<Self>,
+	                           public derive::iterators<Self>,
+	                           public derive::accessors<Self>
 	{ };
 
 	template <typename Self>
-	struct base<Self, true>: public derive::operators<Self>,
-	                         public derive::vectors<Self>,
-	                         public derive::accessors<Self>,
-	                         public derive::assignment<Self>
+	struct base<Self, true> : public derive::operators<Self>,
+	                          public derive::vectors<Self>,
+	                          public derive::iterators<Self>,
+	                          public derive::accessors<Self>,
+	                          public derive::assignment<Self>
 	{
 		using derive::assignment<Self, true>::operator =;
 	};
@@ -516,7 +592,7 @@ namespace ela { namespace expression {
 } }
 
 namespace ela {
-	template <typename T>
+	template <typename...>
 	struct void_t
 	{
 		typedef void type;

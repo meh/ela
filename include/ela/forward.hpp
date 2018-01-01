@@ -39,6 +39,9 @@ namespace ela {
 			struct vectors;
 
 			template <typename Self, bool Concrete = traits<Self>::concrete>
+			struct iterators;
+
+			template <typename Self, bool Concrete = traits<Self>::concrete>
 			struct accessors;
 
 			template <typename Self, bool Concrete = traits<Self>::concrete>
@@ -71,6 +74,23 @@ namespace ela {
 
 		template <typename Input>
 		class invert;
+	}
+
+	namespace iterator {
+		using row_major = order::row_major;
+		using column_major = order::row_major;
+
+		template <typename Expr, typename Iterator, typename ConstIterator = Iterator>
+		class wrapper;
+
+		template <typename Self, typename Order = order::row_major, bool Concrete = expression::traits<Self>::concrete>
+		class elements;
+
+		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
+		class rows;
+
+		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
+		class columns;
 	}
 
 	namespace storage {
