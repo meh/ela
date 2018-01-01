@@ -331,7 +331,7 @@ namespace ela { namespace expression {
 			operator [] (size_t index) const noexcept
 			{
 				return static_cast<Self const&>(*this)(
-					index % traits<Self>::rows, index / traits<Self>::rows);
+					index / traits<Self>::columns, index % traits<Self>::columns);
 			}
 		};
 
@@ -374,7 +374,7 @@ namespace ela { namespace expression {
 			operator [] (size_t index) const noexcept
 			{
 				return static_cast<Self const&>(*this)(
-					index % traits<Self>::rows, index / traits<Self>::rows);
+					index / traits<Self>::columns, index % traits<Self>::columns);
 			}
 
 			/* Access a scalar at the given index, only available for expressions
@@ -385,7 +385,7 @@ namespace ela { namespace expression {
 			operator [] (size_t index) noexcept
 			{
 				return static_cast<Self&>(*this)(
-					index % traits<Self>::rows, index / traits<Self>::rows);
+					index / traits<Self>::columns, index % traits<Self>::columns);
 			}
 		};
 
