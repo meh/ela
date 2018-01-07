@@ -41,104 +41,7 @@ namespace ela {
 			static constexpr size_t columns = 1;
 			static constexpr bool concrete = traits<Input>::concrete;
 		};
-	}
 
-	template <typename Input, bool Concrete>
-	class for_column
-	{ };
-
-	template <typename Input>
-	class for_column<Input, false>
-	{
-		static constexpr size_t elements = expression::traits<Input>::rows;
-		static constexpr size_t rows = expression::traits<Input>::rows;
-		static constexpr size_t columns = 1;
-
-	public:
-		for_column (size_t column) noexcept
-			: _column(column)
-		{
-			ELA_ASSUME(column < expression::traits<Input>::columns);
-		}
-
-		inline
-		typename expression::traits<Input>::type
-		get (Input const& input, size_t index) const noexcept
-		{
-			ELA_ASSUME(index < expression::traits<Input>::rows);
-
-			return input(index, _column);
-		}
-
-		inline
-		typename expression::traits<Input>::type
-		get (Input const& input, size_t row, size_t column) const noexcept
-		{
-			ELA_ASSUME(column == 0);
-
-			return get(input, row);
-		}
-
-	private:
-		size_t _column;
-	};
-
-	template <typename Input>
-	class for_column<Input, true>
-	{
-	public:
-		static constexpr size_t elements = expression::traits<Input>::rows;
-		static constexpr size_t rows = expression::traits<Input>::rows;
-		static constexpr size_t columns = 1;
-
-	public:
-		for_column (size_t column) noexcept
-			: _column(column)
-		{
-			ELA_ASSUME(column < expression::traits<Input>::columns);
-		}
-
-		inline
-		typename expression::traits<Input>::type const&
-		get (Input const& input, size_t index) const noexcept
-		{
-			ELA_ASSUME(index < expression::traits<Input>::rows);
-
-			return input(index, _column);
-		}
-
-		inline
-		typename expression::traits<Input>::type&
-		get (Input& input, size_t index) noexcept
-		{
-			ELA_ASSUME(index < expression::traits<Input>::rows);
-
-			return input(index, _column);
-		}
-
-		inline
-		typename expression::traits<Input>::type const&
-		get (Input const& input, size_t row, size_t column) const noexcept
-		{
-			ELA_ASSUME(column == 0);
-
-			return get(input, row);
-		}
-
-		inline
-		typename expression::traits<Input>::type&
-		get (Input& input, size_t row, size_t column) noexcept
-		{
-			ELA_ASSUME(column == 0);
-
-			return get(input, row);
-		}
-
-	private:
-		size_t _column;
-	};
-
-	namespace expression {
 		template <typename Input>
 		struct traits<vector<Input, for_row<Input>>>
 		{
@@ -149,55 +52,33 @@ namespace ela {
 		};
 	}
 
-	template <typename Input, bool Concrete>
-	class for_row
-	{ };
-
 	template <typename Input>
-	class for_row<Input, false>
+	class for_column
 	{
 	public:
-		static constexpr size_t elements = expression::traits<Input>::columns;
-		static constexpr size_t rows = 1;
-		static constexpr size_t columns = expression::traits<Input>::columns;
-
-	public:
-		for_row (size_t row) noexcept
-			: _row(row)
+		for_column (size_t column) noexcept
+			: _column(column)
 		{
+			ELA_ASSUME(column < expression::traits<Input>::columns);
+		}
+
+		inline
+		std::pair<size_t, size_t>
+		get (size_t row, size_t column) const noexcept
+		{
+			ELA_ASSUME(column == 0);
 			ELA_ASSUME(row < expression::traits<Input>::rows);
-		}
 
-		inline
-		typename expression::traits<Input>::type
-		get (Input const& input, size_t index) const noexcept
-		{
-			ELA_ASSUME(index < expression::traits<Input>::columns);
-
-			return input(_row, index);
-		}
-
-		inline
-		typename expression::traits<Input>::type
-		get (Input const& input, size_t row, size_t column) const noexcept
-		{
-			ELA_ASSUME(row == 0);
-
-			return get(input, column);
+			return std::make_pair(row, _column);
 		}
 
 	private:
-		size_t _row;
+		size_t _column;
 	};
 
 	template <typename Input>
-	class for_row<Input, true>
+	class for_row
 	{
-	public:
-		static constexpr size_t elements = expression::traits<Input>::columns;
-		static constexpr size_t rows = 1;
-		static constexpr size_t columns = expression::traits<Input>::columns;
-
 	public:
 		for_row (size_t row) noexcept
 			: _row(row)
@@ -206,39 +87,13 @@ namespace ela {
 		}
 
 		inline
-		typename expression::traits<Input>::type const&
-		get (Input const& input, size_t index) const noexcept
-		{
-			ELA_ASSUME(index < expression::traits<Input>::columns);
-
-			return input(_row, index);
-		}
-
-		inline
-		typename expression::traits<Input>::type&
-		get (Input& input, size_t index) noexcept
-		{
-			ELA_ASSUME(index < expression::traits<Input>::columns);
-
-			return input(_row, index);
-		}
-
-		inline
-		typename expression::traits<Input>::type const&
-		get (Input const& input, size_t row, size_t column) const noexcept
+		std::pair<size_t, size_t>
+		get (size_t row, size_t column) const noexcept
 		{
 			ELA_ASSUME(row == 0);
+			ELA_ASSUME(column < expression::traits<Input>::columns);
 
-			return get(input, column);
-		}
-
-		inline
-		typename expression::traits<Input>::type&
-		get (Input& input, size_t row, size_t column) noexcept
-		{
-			ELA_ASSUME(row == 0);
-
-			return get(input, column);
+			return std::make_pair(_row, column);
 		}
 
 	private:
@@ -261,7 +116,8 @@ namespace ela {
 		typename expression::traits<Input>::type
 		operator () (size_t row, size_t column) const noexcept
 		{
-			return _accessor.get(_input, row, column);
+			std::tie(row, column) = _accessor.get(row, column);
+			return _input(row, column);
 		}
 
 	private:
@@ -288,7 +144,8 @@ namespace ela {
 		typename expression::traits<Input>::type const&
 		operator () (size_t row, size_t column) const noexcept
 		{
-			return _accessor.get(_input, row, column);
+			std::tie(row, column) = _accessor.get(row, column);
+			return _input(row, column);
 		}
 
 		/* Access a scalar at the given row and column.
@@ -297,7 +154,8 @@ namespace ela {
 		typename expression::traits<Input>::type&
 		operator () (size_t row, size_t column) noexcept
 		{
-			return _accessor.get(_input, row, column);
+			std::tie(row, column) = _accessor.get(row, column);
+			return _input(row, column);
 		}
 
 	private:

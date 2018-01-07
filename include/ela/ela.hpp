@@ -93,10 +93,10 @@ namespace ela {
 	template <typename Type, size_t Rows, size_t Columns = Rows>
 	class matrix;
 
-	template <typename Input, bool Concrete = expression::traits<Input>::concrete>
+	template <typename Input>
 	class for_column;
 
-	template <typename Input, bool Concrete = expression::traits<Input>::concrete>
+	template <typename Input>
 	class for_row;
 
 	template <typename Expr, typename Accessor, bool Concrete = expression::traits<Expr>::concrete>

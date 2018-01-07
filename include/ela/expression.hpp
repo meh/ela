@@ -157,23 +157,23 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_column<Self, false>, false>
+			vector<Self, for_column<Self>, false>
 			column () const noexcept
 			{
 				static_assert(Index < traits<Self>::columns,
 					"index out of bounds");
 
-				return vector<Self, for_column<Self, false>, false>(
+				return vector<Self, for_column<Self>, false>(
 					static_cast<Self const&>(*this), Index);
 			}
 
 			/* Access the column vector at the given index.
 			 */
 			inline
-			vector<Self, for_column<Self, false>, false>
+			vector<Self, for_column<Self>, false>
 			column (size_t index) const noexcept
 			{
-				return vector<Self, for_column<Self, false>, false>(
+				return vector<Self, for_column<Self>, false>(
 					static_cast<Self const&>(*this), index);
 			}
 
@@ -188,7 +188,7 @@ namespace ela { namespace expression {
 				static_assert(Index < traits<Self>::rows,
 					"index out of bounds");
 
-				return vector<Self, for_row<Self, false>, false>(
+				return vector<Self, for_row<Self>, false>(
 					static_cast<Self const&>(*this), Index);
 			}
 
@@ -198,7 +198,7 @@ namespace ela { namespace expression {
 			vector<Self, for_row<Self>>
 			row (size_t index) const noexcept
 			{
-				return vector<Self, for_row<Self, false>, false>(
+				return vector<Self, for_row<Self>, false>(
 					static_cast<Self const&>(*this), index);
 			}
 		};
@@ -211,23 +211,23 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_column<Self, false>, false>
+			vector<Self, for_column<Self>, false>
 			column () const noexcept
 			{
 				static_assert(Index < traits<Self>::columns,
 					"index out of bounds");
 
-				return vector<Self, for_column<Self, false>, false>(
+				return vector<Self, for_column<Self>, false>(
 					static_cast<Self const&>(*this), Index);
 			}
 
 			/* Access the column vector at the given index.
 			 */
 			inline
-			vector<Self, for_column<Self, false>, false>
+			vector<Self, for_column<Self>, false>
 			column (size_t index) const noexcept
 			{
-				return vector<Self, for_column<Self, false>, false>(
+				return vector<Self, for_column<Self>, false>(
 					static_cast<Self const&>(*this), index);
 			}
 
@@ -236,23 +236,23 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_column<Self, true>, true>
+			vector<Self, for_column<Self>, true>
 			column () noexcept
 			{
 				static_assert(Index < traits<Self>::columns,
 					"index out of bounds");
 
-				return vector<Self, for_column<Self, true>, true>(
+				return vector<Self, for_column<Self>, true>(
 					static_cast<Self&>(*this), Index);
 			}
 
 			/* Access the column vector at the given index.
 			 */
 			inline
-			vector<Self, for_column<Self, true>, true>
+			vector<Self, for_column<Self>, true>
 			column (size_t index) noexcept
 			{
-				return vector<Self, for_column<Self, true>, true>(
+				return vector<Self, for_column<Self>, true>(
 					static_cast<Self&>(*this), index);
 			}
 
@@ -267,7 +267,7 @@ namespace ela { namespace expression {
 				static_assert(Index < traits<Self>::rows,
 					"index out of bounds");
 
-				return vector<Self, for_row<Self, false>, false>(
+				return vector<Self, for_row<Self>, false>(
 					static_cast<Self const&>(*this), Index);
 			}
 
@@ -277,7 +277,7 @@ namespace ela { namespace expression {
 			vector<Self, for_row<Self>>
 			row (size_t index) const noexcept
 			{
-				return vector<Self, for_row<Self, false>, false>(
+				return vector<Self, for_row<Self>, false>(
 					static_cast<Self const&>(*this), index);
 			}
 
@@ -286,23 +286,23 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_row<Self, true>, true>
+			vector<Self, for_row<Self>, true>
 			row () noexcept
 			{
 				static_assert(Index < traits<Self>::rows,
 					"index out of bounds");
 
-				return vector<Self, for_row<Self, true>, true>(
+				return vector<Self, for_row<Self>, true>(
 					static_cast<Self&>(*this), Index);
 			}
 
 			/* Access the row vector at the given index.
 			 */
 			inline
-			vector<Self, for_row<Self, true>, true>
+			vector<Self, for_row<Self>, true>
 			row (size_t index) noexcept
 			{
-				return vector<Self, for_row<Self, true>, true>(
+				return vector<Self, for_row<Self>, true>(
 					static_cast<Self&>(*this), index);
 			}
 		};
