@@ -41,103 +41,10 @@
 # endif
 #endif
 
-namespace ela {
-	namespace expression {
-		template <typename Expr>
-		struct traits;
-
-		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
-		struct base;
-
-		namespace derive {
-			template <typename Self>
-			struct operators;
-
-			template <typename Self, bool Concrete = traits<Self>::concrete>
-			struct vectors;
-
-			template <typename Self, bool Concrete = traits<Self>::concrete>
-			struct accessors;
-
-			template <typename Self, bool Concrete = traits<Self>::concrete>
-			struct assignment;
-		}
-
-		template <typename Self, typename Input>
-		class unary;
-
-		template <typename Self, typename Left, typename Right>
-		class binary;
-
-		template <typename Left, typename Right>
-		class add;
-
-		template <typename Left, typename Right>
-		class subtract;
-
-		template <typename Left, typename Right>
-		class multiply;
-
-		template <typename Input>
-		class scale;
-
-		template <typename Input, bool Concrete = traits<Input>::concrete>
-		class transpose;
-
-		template <typename Input, size_t Dimension>
-		struct inversion;
-
-		template <typename Input>
-		class invert;
-	}
-
-	namespace storage {
-		struct row_major;
-		struct column_major;
-
-		struct pointer;
-		struct stack;
-		struct heap;
-
-		template <template <typename> class Allocator = std::allocator>
-		struct allocator;
-
-		template <typename Impl, typename Order = row_major>
-		struct specifier;
-
-		template <typename Specifier, typename Type, size_t Rows, size_t Columns>
-		class impl;
-	}
-
-	template <typename Type, size_t Rows, size_t Columns = Rows,
-		typename Storage = storage::specifier<storage::stack, storage::row_major>,
-		bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, Columns>>::value>
-	class matrix;
-
-	template <typename Input>
-	class for_column;
-
-	template <typename Input>
-	class for_row;
-
-	template <typename Expr, typename Accessor, bool Concrete = expression::traits<Expr>::concrete>
-	class vector;
-
-	template <typename Expr>
-	struct is_expr
-	{
-		static constexpr bool value =
-			!std::is_void<typename expression::traits<Expr>::type>::value;
-	};
-
-	template <typename Expr>
-	using expr_traits = expression::traits<Expr>;
-}
-
+#include "forward.hpp"
 #include "expression.hpp"
 #include "storage.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"
 
-#undef assume
 #endif
