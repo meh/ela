@@ -21,6 +21,7 @@
 #ifndef ELA_H
 #define ELA_H
 
+#include <memory>
 #include <algorithm>
 #include <initializer_list>
 #include <cmath>
@@ -90,7 +91,27 @@ namespace ela {
 		class invert;
 	}
 
-	template <typename Type, size_t Rows, size_t Columns = Rows>
+	namespace storage {
+		struct row_major;
+		struct column_major;
+
+		struct pointer;
+		struct stack;
+		struct heap;
+
+		template <template <typename> class Allocator = std::allocator>
+		struct allocator;
+
+		template <typename Impl, typename Order = row_major>
+		struct specifier;
+
+		template <typename Specifier, typename Type, size_t Rows, size_t Columns>
+		class impl;
+	}
+
+	template <typename Type, size_t Rows, size_t Columns = Rows,
+		typename Storage = storage::specifier<storage::stack, storage::row_major>,
+		bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, Columns>>::value>
 	class matrix;
 
 	template <typename Input>
@@ -108,9 +129,13 @@ namespace ela {
 		static constexpr bool value =
 			!std::is_void<typename expression::traits<Expr>::type>::value;
 	};
+
+	template <typename Expr>
+	using expr_traits = expression::traits<Expr>;
 }
 
 #include "expression.hpp"
+#include "storage.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"
 

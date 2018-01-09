@@ -22,16 +22,6 @@
 #define ELA_VECTOR_H
 
 namespace ela {
-	/* A column vector.
-	 */
-	template <typename Type, size_t Rows>
-	using column_vector = matrix<Type, Rows, 1>;
-
-	/* A row vector.
-	 */
-	template <typename Type, size_t Columns>
-	using row_vector = matrix<Type, 1, Columns>;
-
 	namespace expression {
 		template <typename Input>
 		struct traits<vector<Input, for_column<Input>>>

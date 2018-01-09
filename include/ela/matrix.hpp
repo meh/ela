@@ -23,8 +23,8 @@
 
 namespace ela {
 	namespace expression {
-		template <typename Type, size_t Rows, size_t Columns>
-		struct traits<matrix<Type, Rows, Columns>>
+		template <typename Type, size_t Rows, size_t Columns, typename Storage>
+		struct traits<matrix<Type, Rows, Columns, Storage>>
 		{
 			typedef Type type;
 			static constexpr size_t rows = Rows;
@@ -34,14 +34,60 @@ namespace ela {
 	}
 
 	/* A matrix.
-	 *
-	 * The internal buffer is a contiguous column-major array.
 	 */
-	template <typename Type, size_t Rows, size_t Columns>
-	class matrix: public expression::base<matrix<Type, Rows, Columns>>
+	template <typename Type, size_t Rows, size_t Columns, typename Storage>
+	class matrix<Type, Rows, Columns, Storage, false>
+		: public expression::base<matrix<Type, Rows, Columns, Storage, false>>
 	{
 	public:
-		using expression::base<matrix<Type, Rows, Columns>>::operator =;
+		using expression::base<matrix<Type, Rows, Columns, Storage>>::operator =;
+
+	public:
+		template <typename... Args>
+		matrix (Args&&... args) noexcept
+			: _storage(std::forward<Args>(args)...)
+		{ }
+
+		/* Access a scalar at the given row and column.
+		 */
+		inline
+		Type const&
+		operator () (size_t row, size_t column) const noexcept
+		{
+			return _storage(row, column);
+		}
+
+		/* Access a scalar at the given row and column.
+		 */
+		inline
+		Type&
+		operator () (size_t row, size_t column) noexcept
+		{
+			return _storage(row, column);
+		}
+
+		inline
+		operator Type* (void) noexcept
+		{
+			return _storage;
+		}
+
+		inline
+		operator Type const* (void) const noexcept
+		{
+			return _storage;
+		}
+
+	private:
+		storage::impl<Storage, Type, Rows, Columns> _storage;
+	};
+
+	template <typename Type, size_t Rows, size_t Columns, typename Storage>
+	class matrix<Type, Rows, Columns, Storage, true>
+		: public expression::base<matrix<Type, Rows, Columns, Storage, true>>
+	{
+	public:
+		using expression::base<matrix<Type, Rows, Columns, Storage>>::operator =;
 
 	public:
 		/* Create an empty matrix.
@@ -50,9 +96,8 @@ namespace ela {
 		{ }
 
 		matrix (Type value) noexcept
-		{
-			std::fill_n(_buffer, Rows * Columns, value);
-		}
+			: _storage(value)
+		{ }
 
 		template <typename Input, typename T = Type, size_t R = Rows, size_t C = Columns>
 		matrix (Input const& expr, typename std::enable_if<
@@ -60,24 +105,24 @@ namespace ela {
 			C == expression::traits<Input>::columns &&
 			std::is_same<T, typename expression::traits<Input>::type>::value>::type* = 0) noexcept
 		{
-			expression::base<matrix<Type, Rows, Columns>>::operator=(expr);
+			expression::base<matrix<Type, Rows, Columns, Storage>>::operator=(expr);
 		}
 
 		matrix (std::initializer_list<std::initializer_list<Type>> rows) noexcept
 		{
-			expression::base<matrix<Type, Rows, Columns>>::operator=(rows);
+			expression::base<matrix<Type, Rows, Columns, Storage>>::operator=(rows);
 		}
 
 		matrix (std::initializer_list<Type> elements) noexcept
 		{
-			expression::base<matrix<Type, Rows, Columns>>::operator=(elements);
+			expression::base<matrix<Type, Rows, Columns, Storage>>::operator=(elements);
 		}
 
 		/* Create an identity matrix with the given value.
 		 */
 		template <size_t R = Rows, size_t C = Columns>
 		static inline
-		typename std::enable_if<R == C, matrix<Type, Rows, Columns>>::type
+		typename std::enable_if<R == C, matrix<Type, Rows, Columns, Storage>>::type
 		identity () noexcept
 		{
 			matrix<Type, Rows, Columns> result;
@@ -93,7 +138,7 @@ namespace ela {
 		 */
 		template <size_t R = Rows, size_t C = Columns>
 		static inline
-		typename std::enable_if<R == C && (R == 3 || R == 4), matrix<Type, Rows, Columns>>::type
+		typename std::enable_if<R == C && (R == 3 || R == 4), matrix<Type, Rows, Columns, Storage>>::type
 		scaling (Type x, Type y, Type z) noexcept
 		{
 			auto result = identity();
@@ -109,7 +154,7 @@ namespace ela {
 		 */
 		template <size_t R = Rows, size_t C = Columns>
 		static inline
-		typename std::enable_if<R == C && (R == 3 || R == 4), matrix<Type, Rows, Columns>>::type
+		typename std::enable_if<R == C && (R == 3 || R == 4), matrix<Type, Rows, Columns, Storage>>::type
 		scaling (Type x) noexcept
 		{
 			auto result = identity();
@@ -127,9 +172,7 @@ namespace ela {
 		Type const&
 		operator () (size_t row, size_t column) const noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
-
-			return _buffer[row * Columns + column];
+			return _storage(row, column);
 		}
 
 		/* Access a scalar at the given row and column.
@@ -138,30 +181,38 @@ namespace ela {
 		Type&
 		operator () (size_t row, size_t column) noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
-
-			return _buffer[row * Columns + column];
+			return _storage(row, column);
 		}
 
-		/* Return the wrapped raw pointer (row major).
-		 */
 		inline
-		Type* operator & (void) noexcept
+		operator Type* (void) noexcept
 		{
-			return _buffer;
+			return _storage;
 		}
 
-		/* Return the wrapped constant raw pointer (row major).
-		 */
 		inline
-		Type const* operator & (void) const noexcept
+		operator Type const* (void) const noexcept
 		{
-			return _buffer;
+			return _storage;
 		}
 
 	private:
-		Type _buffer[Rows * Columns] = { 0 };
+		storage::impl<Storage, Type, Rows, Columns> _storage;
 	};
+
+	/* A column vector.
+	 */
+	template <typename Type, size_t Rows,
+	typename Storage = storage::specifier<storage::stack, storage::row_major>,
+	bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, 1>>::value>
+	using column_vector = matrix<Type, Rows, 1, Storage, Owned>;
+
+	/* A row vector.
+	 */
+	template <typename Type, size_t Columns,
+	typename Storage = storage::specifier<storage::stack, storage::row_major>,
+	bool Owned = std::is_default_constructible<storage::impl<Storage, Type, 1, Columns>>::value>
+	using row_vector = matrix<Type, 1, Columns>;
 }
 
 #endif
