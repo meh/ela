@@ -99,14 +99,4 @@ namespace ela {
 
 	template <typename Expr, typename Accessor, bool Concrete = expression::traits<Expr>::concrete>
 	class vector;
-
-	template <typename Expr>
-	struct is_expr
-	{
-		static constexpr bool value =
-			!std::is_void<typename expression::traits<Expr>::type>::value;
-	};
-
-	template <typename Expr>
-	using expr_traits = expression::traits<Expr>;
 }

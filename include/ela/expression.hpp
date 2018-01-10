@@ -22,29 +22,6 @@
 #define ELA_EXPRESSION_H
 
 namespace ela { namespace expression {
-	/* Traits for expressions.
-	 */
-	template <typename Self>
-	struct traits
-	{
-		/* The scalar type.
-		 */
-		typedef void type;
-
-		/* Whether the expression is concrete or not, concrete expressions have
-		 * backing storage.
-		 */
-		static constexpr bool concrete = false;
-
-		/* The number of rows.
-		 */
-		static constexpr size_t rows = 0;
-
-		/* The number of columns.
-		 */
-		static constexpr size_t columns = 0;
-	};
-
 	namespace derive {
 		template <typename Self>
 		struct operators
@@ -524,6 +501,23 @@ namespace ela { namespace expression {
 		Right _right;
 	};
 } }
+
+namespace ela {
+	template <typename Expr, typename = void>
+	struct is_expr
+	{
+		static constexpr bool value = false;
+	};
+
+	template <typename Expr>
+	struct is_expr<Expr, typename std::enable_if<!std::is_void<typename expression::traits<Expr>::type>::value, std::true_type>>
+	{
+		static constexpr bool value = true;
+	};
+
+	template <typename Expr>
+	using expr_traits = expression::traits<Expr>;
+}
 
 /* Binary expressions.
  */
