@@ -27,15 +27,13 @@
 #include <cmath>
 #include <cassert>
 
-#if defined(_MSVC_VER)
-#	define ELA_ASSUME_(e) __assume(e)
-#else
-#	define ELA_ASSUME_(e) if (!(e)) { __builtin_unreachable(); }
-#endif
-
 #if !defined(ELA_ASSUME)
 # if defined(NDEBUG)
-#		define ELA_ASSUME(e) ELA_ASSUME_(e)
+#		if defined(_MSVC_VER)
+#			define ELA_ASSUME(e) __assume(e)
+#		else
+#			define ELA_ASSUME(e) if (!(e)) { __builtin_unreachable(); }
+#		endif
 #	else
 #		define ELA_ASSUME(e) assert(e)
 # endif
