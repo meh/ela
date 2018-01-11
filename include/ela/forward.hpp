@@ -19,6 +19,11 @@
 // SOFTWARE.
 
 namespace ela {
+	namespace order {
+		struct row_major;
+		struct column_major;
+	}
+
 	namespace expression {
 		template <typename Expr>
 		struct traits;
@@ -69,9 +74,6 @@ namespace ela {
 	}
 
 	namespace storage {
-		struct row_major;
-		struct column_major;
-
 		struct pointer;
 		struct stack;
 		struct heap;
@@ -79,7 +81,7 @@ namespace ela {
 		template <template <typename> class Allocator = std::allocator>
 		struct allocator;
 
-		template <typename Impl, typename Order = row_major>
+		template <typename Impl, typename Order = order::row_major>
 		struct specifier;
 
 		template <typename Specifier, typename Type, size_t Rows, size_t Columns>
@@ -87,7 +89,7 @@ namespace ela {
 	}
 
 	template <typename Type, size_t Rows, size_t Columns = Rows,
-		typename Storage = storage::specifier<storage::stack, storage::row_major>,
+		typename Storage = storage::specifier<storage::stack, order::row_major>,
 		bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, Columns>>::value>
 	class matrix;
 

@@ -203,14 +203,14 @@ namespace ela {
 	/* A column vector.
 	 */
 	template <typename Type, size_t Rows,
-	typename Storage = storage::specifier<storage::stack, storage::row_major>,
+	typename Storage = storage::specifier<storage::stack, order::row_major>,
 	bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, 1>>::value>
 	using column_vector = matrix<Type, Rows, 1, Storage, Owned>;
 
 	/* A row vector.
 	 */
 	template <typename Type, size_t Columns,
-	typename Storage = storage::specifier<storage::stack, storage::row_major>,
+	typename Storage = storage::specifier<storage::stack, order::row_major>,
 	bool Owned = std::is_default_constructible<storage::impl<Storage, Type, 1, Columns>>::value>
 	using row_vector = matrix<Type, 1, Columns>;
 }

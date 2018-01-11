@@ -18,16 +18,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ela { namespace storage {
-	template <typename Impl, typename Order>
-	struct specifier
+namespace ela { namespace order {
+	/* Row major order.
+	 */
+	struct row_major
 	{
-		typedef Order order;
-		typedef Impl impl;
+		template <size_t Rows, size_t Columns>
+		static inline
+		size_t
+		index (size_t row, size_t column) noexcept
+		{
+			return row * Columns + column;
+		}
+
+		template <size_t Rows, size_t Columns>
+		static inline
+		std::pair<size_t, size_t>
+		index (size_t index) noexcept
+		{
+			return std::make_pair(index / Columns, index % Columns);
+		}
+	};
+
+	/* Column major order.
+	 */
+	struct column_major
+	{
+		template <size_t Rows, size_t Columns>
+		static inline
+		size_t
+		index (size_t row, size_t column) noexcept
+		{
+			return column * Rows + row;
+		}
+
+		template <size_t Rows, size_t Columns>
+		static inline
+		std::pair<size_t, size_t>
+		index (size_t index) noexcept
+		{
+			return std::make_pair(index / Rows, index % Rows);
+		}
 	};
 } }
-
-#include "storage/pointer.hpp"
-#include "storage/stack.hpp"
-#include "storage/heap.hpp"
-#include "storage/allocator.hpp"

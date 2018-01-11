@@ -40,8 +40,9 @@
 #endif
 
 #include "forward.hpp"
-#include "expression.hpp"
+#include "order.hpp"
 #include "storage.hpp"
+#include "expression.hpp"
 #include "matrix.hpp"
 #include "vector.hpp"
 
