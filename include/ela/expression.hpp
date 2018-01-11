@@ -301,14 +301,19 @@ namespace ela { namespace expression {
 				return static_cast<Self const&>(*this)(Row, Column);
 			}
 
-			/* Access a scalar at the given row-major index.
+			/* Access a scalar at the given index, only available for vector
+			 * expressions.
 			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
 			inline
-			typename traits<Self>::type
+			typename std::enable_if<R == 1 || C == 1, T>::type
 			operator [] (size_t index) const noexcept
 			{
-				return static_cast<Self const&>(*this)(
-					index / traits<Self>::columns, index % traits<Self>::columns);
+				ELA_ASSUME(index < (R == 1 ? C : R));
+
+				return (R == 1)
+					? static_cast<Self const&>(*this)(0, index)
+					: static_cast<Self const&>(*this)(index, 0);
 			}
 		};
 
@@ -343,26 +348,34 @@ namespace ela { namespace expression {
 				return static_cast<Self&>(*this)(Row, Column);
 			}
 
-			/* Access a scalar at the given index, only available for expressions
-			 * returning vectors.
+			/* Access a scalar at the given index, only available for vector
+			 * expressions.
 			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
 			inline
-			typename traits<Self>::type
+			typename std::enable_if<R == 1 || C == 1, T>::type const&
 			operator [] (size_t index) const noexcept
 			{
-				return static_cast<Self const&>(*this)(
-					index / traits<Self>::columns, index % traits<Self>::columns);
+				ELA_ASSUME(index < (R == 1 ? C : R));
+
+				return (R == 1)
+					? static_cast<Self const&>(*this)(0, index)
+					: static_cast<Self const&>(*this)(index, 0);
 			}
 
-			/* Access a scalar at the given index, only available for expressions
-			 * returning vectors.
+			/* Access a scalar at the given index, only available for vector
+			 * expressions.
 			 */
+			template <typename T = typename traits<Self>::type, size_t R = traits<Self>::rows, size_t C = traits<Self>::columns>
 			inline
-			typename traits<Self>::type
+			typename std::enable_if<R == 1 || C == 1, T>::type&
 			operator [] (size_t index) noexcept
 			{
-				return static_cast<Self&>(*this)(
-					index / traits<Self>::columns, index % traits<Self>::columns);
+				ELA_ASSUME(index < (R == 1 ? C : R));
+
+				return (R == 1)
+					? static_cast<Self&>(*this)(0, index)
+					: static_cast<Self&>(*this)(index, 0);
 			}
 		};
 
