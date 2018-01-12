@@ -57,7 +57,7 @@ namespace ela { namespace order {
 		std::pair<size_t, size_t>
 		index (size_t index) noexcept
 		{
-			return std::make_pair(index / Rows, index % Rows);
+			return std::make_pair(index % Rows, index / Rows);
 		}
 	};
 } }

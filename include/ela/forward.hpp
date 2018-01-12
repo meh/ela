@@ -74,6 +74,9 @@ namespace ela {
 	}
 
 	namespace storage {
+		using row_major = order::row_major;
+		using column_major = order::row_major;
+
 		struct pointer;
 		struct stack;
 		struct heap;
