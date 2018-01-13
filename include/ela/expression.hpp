@@ -516,17 +516,20 @@ namespace ela { namespace expression {
 } }
 
 namespace ela {
-	template <typename Expr, typename = void>
-	struct is_expr
+	template <typename T>
+	struct void_t
 	{
-		static constexpr bool value = false;
+		typedef void type;
 	};
 
+	template <typename Expr, typename = void>
+	struct is_expr : public std::false_type
+	{ };
+
 	template <typename Expr>
-	struct is_expr<Expr, typename std::enable_if<!std::is_void<typename expression::traits<Expr>::type>::value, std::true_type>>
-	{
-		static constexpr bool value = true;
-	};
+	struct is_expr<Expr, typename void_t<typename expression::traits<Expr>::type>::type>
+		: public std::true_type
+	{ };
 
 	template <typename Expr>
 	using expr_traits = expression::traits<Expr>;
