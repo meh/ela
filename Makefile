@@ -15,6 +15,8 @@ TESTS := $(SOURCES:.cpp=.test)
 
 .PHONY: test
 test: $(TESTS)
+	@ $(CXX) --version | head -n1
+	@ echo
 	@ for test in $(TESTS); do \
 		$$test; \
 		echo; \
