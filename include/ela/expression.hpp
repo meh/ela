@@ -413,7 +413,7 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Row, size_t Column>
 			inline
-			typename traits<Self>::type
+			typename traits<Self>::type&
 			at () noexcept
 			{
 				static_assert(Row < traits<Self>::rows && Column < traits<Self>::columns,
