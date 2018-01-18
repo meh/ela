@@ -22,13 +22,13 @@
 #define ELA_EXPRESSION_TRANSPOSE_H
 
 namespace ela { namespace expression {
-	template <typename Input>
-	struct traits<transpose<Input>>
+	template <typename Input, bool Concrete>
+	struct traits<transpose<Input, Concrete>>
 	{
 		typedef typename traits<Input>::type type;
 		static constexpr size_t rows = traits<Input>::columns;
 		static constexpr size_t columns = traits<Input>::rows;
-		static constexpr bool concrete = traits<Input>::concrete;
+		static constexpr bool concrete = Concrete;
 	};
 
 	/* Transposition expression, swaps rows with columns.
