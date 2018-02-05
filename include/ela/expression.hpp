@@ -69,19 +69,19 @@ namespace ela { namespace expression {
 			/* Create a transpose expression.
 			 */
 			inline
-			transpose<Self>
+			transpose<Self, false>
 			operator ~ () const noexcept
 			{
-				return transpose<Self>(static_cast<Self const&>(*this));
+				return transpose<Self, false>(static_cast<Self const&>(*this));
 			}
 
 			/* Create a transpose expression.
 			 */
 			inline
-			transpose<Self>
+			transpose<Self, true>
 			operator ~ () noexcept
 			{
-				return transpose<Self>(static_cast<Self&>(*this));
+				return transpose<Self, true>(static_cast<Self&>(*this));
 			}
 
 			/* Create an inversion expression.
