@@ -65,12 +65,6 @@ namespace ela {
 
 		namespace scalar {
 			template <typename Input>
-			class add;
-
-			template <typename Input>
-			class subtract;
-
-			template <typename Input>
 			class multiply;
 
 			template <typename Input>

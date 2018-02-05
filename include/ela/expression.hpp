@@ -79,24 +79,6 @@ namespace ela { namespace expression {
 				return multiply<Self, Other>(static_cast<Self const&>(*this), other);
 			}
 
-			/* Create a scalar addition expression.
-			 */
-			inline
-			scalar::add<Self>
-			operator + (typename traits<Self>::type value) const noexcept
-			{
-				return scalar::add<Self>(static_cast<Self const&>(*this), value);
-			}
-
-			/* Create a scalar subtraction expression.
-			 */
-			inline
-			scalar::subtract<Self>
-			operator - (typename traits<Self>::type value) const noexcept
-			{
-				return scalar::subtract<Self>(static_cast<Self const&>(*this), value);
-			}
-
 			/* Create a scalar multiplication expression.
 			 */
 			inline
@@ -657,8 +639,6 @@ namespace ela { namespace expression {
 
 /* Scalar expressions.
  */
-#include "expression/scalar/add.hpp"
-#include "expression/scalar/subtract.hpp"
 #include "expression/scalar/multiply.hpp"
 #include "expression/scalar/divide.hpp"
 
