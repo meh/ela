@@ -83,5 +83,13 @@ main (void)
 
 			amiequal(b, c);
 		}},
+
+		{"fill", []{
+			ela::matrix<int, 3> a = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+			ela::matrix<int, 3> b = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
+
+			std::fill(a.elements().begin(), a.elements().end(), 1);
+			amiequal(a, b);
+		}},
 	});
 }
