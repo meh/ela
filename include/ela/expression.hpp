@@ -21,6 +21,26 @@
 #ifndef ELA_EXPRESSION_H
 #define ELA_EXPRESSION_H
 
+namespace ela {
+	template <typename...>
+	struct void_t
+	{
+		typedef void type;
+	};
+
+	template <typename Expr, typename = void>
+	struct is_expr : public std::false_type
+	{ };
+
+	template <typename Expr>
+	struct is_expr<Expr, typename void_t<typename expression::traits<Expr>::type>::type>
+		: public std::true_type
+	{ };
+
+	template <typename Expr>
+	using expr_traits = expression::traits<Expr>;
+}
+
 namespace ela { namespace expression {
 	namespace derive {
 		template <typename Self>
@@ -30,7 +50,8 @@ namespace ela { namespace expression {
 			 */
 			template <typename Other>
 			inline
-			add<Self, Other>
+			typename std::enable_if<is_expr<Other>::value,
+			add<Self, Other>>::type
 			operator + (Other const& other) const noexcept
 			{
 				return add<Self, Other>(static_cast<Self const&>(*this), other);
@@ -40,7 +61,8 @@ namespace ela { namespace expression {
 			 */
 			template <typename Other>
 			inline
-			subtract<Self, Other>
+			typename std::enable_if<is_expr<Other>::value,
+			subtract<Self, Other>>::type
 			operator - (Other const& other) const noexcept
 			{
 				return subtract<Self, Other>(static_cast<Self const&>(*this), other);
@@ -50,20 +72,47 @@ namespace ela { namespace expression {
 			 */
 			template <typename Other>
 			inline
-			typename std::enable_if<!std::is_same<typename traits<Other>::type, void>::value,
+			typename std::enable_if<is_expr<Other>::value,
 			multiply<Self, Other>>::type
 			operator * (Other const& other) const noexcept
 			{
 				return multiply<Self, Other>(static_cast<Self const&>(*this), other);
 			}
 
-			/* Create a multiplication expression.
+			/* Create a scalar addition expression.
 			 */
 			inline
-			scale<Self>
+			scalar::add<Self>
+			operator + (typename traits<Self>::type value) const noexcept
+			{
+				return scalar::add<Self>(static_cast<Self const&>(*this), value);
+			}
+
+			/* Create a scalar subtraction expression.
+			 */
+			inline
+			scalar::subtract<Self>
+			operator - (typename traits<Self>::type value) const noexcept
+			{
+				return scalar::subtract<Self>(static_cast<Self const&>(*this), value);
+			}
+
+			/* Create a scalar multiplication expression.
+			 */
+			inline
+			scalar::multiply<Self>
 			operator * (typename traits<Self>::type value) const noexcept
 			{
-				return scale<Self>(static_cast<Self const&>(*this), value);
+				return scalar::multiply<Self>(static_cast<Self const&>(*this), value);
+			}
+
+			/* Create a scalar multiplication expression.
+			 */
+			inline
+			scalar::divide<Self>
+			operator / (typename traits<Self>::type value) const noexcept
+			{
+				return scalar::divide<Self>(static_cast<Self const&>(*this), value);
 			}
 
 			/* Create an inversion expression.
@@ -600,32 +649,18 @@ namespace ela { namespace expression {
 	};
 } }
 
-namespace ela {
-	template <typename...>
-	struct void_t
-	{
-		typedef void type;
-	};
-
-	template <typename Expr, typename = void>
-	struct is_expr : public std::false_type
-	{ };
-
-	template <typename Expr>
-	struct is_expr<Expr, typename void_t<typename expression::traits<Expr>::type>::type>
-		: public std::true_type
-	{ };
-
-	template <typename Expr>
-	using expr_traits = expression::traits<Expr>;
-}
-
 /* Binary expressions.
  */
 #include "expression/add.hpp"
 #include "expression/subtract.hpp"
 #include "expression/multiply.hpp"
-#include "expression/scale.hpp"
+
+/* Scalar expressions.
+ */
+#include "expression/scalar/add.hpp"
+#include "expression/scalar/subtract.hpp"
+#include "expression/scalar/multiply.hpp"
+#include "expression/scalar/divide.hpp"
 
 /* Unary expressions.
  */

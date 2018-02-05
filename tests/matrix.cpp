@@ -100,7 +100,41 @@ main (void)
 			amiequal(c(2, 2), 18.0);
 		}},
 
-		{"scale", []{
+		{"scalar add", []{
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b = a + 1;
+
+			amiequal(b(0, 0), 2.0);
+			amiequal(b(0, 1), 3.0);
+			amiequal(b(0, 2), 4.0);
+
+			amiequal(b(1, 0), 5.0);
+			amiequal(b(1, 1), 6.0);
+			amiequal(b(1, 2), 7.0);
+
+			amiequal(b(2, 0), 8.0);
+			amiequal(b(2, 1), 9.0);
+			amiequal(b(2, 2), 10.0);
+		}},
+
+		{"scalar subtract", []{
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b = a - 1;
+
+			amiequal(b(0, 0), 0.0);
+			amiequal(b(0, 1), 1.0);
+			amiequal(b(0, 2), 2.0);
+
+			amiequal(b(1, 0), 3.0);
+			amiequal(b(1, 1), 4.0);
+			amiequal(b(1, 2), 5.0);
+
+			amiequal(b(2, 0), 6.0);
+			amiequal(b(2, 1), 7.0);
+			amiequal(b(2, 2), 8.0);
+		}},
+
+		{"scalar multiply", []{
 			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
 			ela::matrix<float, 3, 3> b = a * 2;
 
@@ -115,6 +149,23 @@ main (void)
 			amiequal(b(2, 0), 14.0);
 			amiequal(b(2, 1), 16.0);
 			amiequal(b(2, 2), 18.0);
+		}},
+
+		{"scalar divide", []{
+			ela::matrix<float, 3, 3> a({ { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { 7.0, 8.0, 9.0 } });
+			ela::matrix<float, 3, 3> b = a / 2;
+
+			amiequal(b(0, 0), 0.5);
+			amiequal(b(0, 1), 1.0);
+			amiequal(b(0, 2), 1.5);
+
+			amiequal(b(1, 0), 2.0);
+			amiequal(b(1, 1), 2.5);
+			amiequal(b(1, 2), 3.0);
+
+			amiequal(b(2, 0), 3.5);
+			amiequal(b(2, 1), 4.0);
+			amiequal(b(2, 2), 4.5);
 		}},
 
 		{"transpose", []{

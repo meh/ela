@@ -18,12 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef ELA_EXPRESSION_SCALE_H
-#define ELA_EXPRESSION_SCALE_H
+#ifndef ELA_EXPRESSION_SCALAR_MULTIPLY_H
+#define ELA_EXPRESSION_SCALAR_MULTIPLY_H
 
 namespace ela { namespace expression {
 	template <typename Left>
-	struct traits<scale<Left>>
+	struct traits<scalar::multiply<Left>>
 	{
 		typedef typename traits<Left>::type type;
 		static constexpr size_t rows = traits<Left>::rows;
@@ -31,31 +31,33 @@ namespace ela { namespace expression {
 		static constexpr bool concrete = false;
 	};
 
-	/* Scaling expression.
-	 */
-	template <typename Left>
-	class scale : public binary<scale<Left>, Left const&, typename traits<Left>::type>
-	{
-	public:
-
-	public:
-		/* Create a new scaling expression.
-		 */
-		scale (Left const& left, typename traits<Left>::type right) noexcept
-			: binary<scale<Left>, Left const&, typename traits<Left>::type>(left, right)
-		{ }
-
-		/* Access the scaled scalar at the given index.
-		 */
-		inline
-		typename traits<Left>::type
-		operator () (size_t row, size_t column) const noexcept
+	namespace scalar {
+		/* Scaling expression.
+	 	 */
+		template <typename Left>
+		class multiply : public binary<multiply<Left>, Left const&, typename traits<Left>::type>
 		{
-			ELA_ASSUME(row < traits<Left>::rows && column < traits<Left>::columns);
+		public:
 
-			return this->_left(row, column) * this->_right;
-		}
-	};
+		public:
+			/* Create a new scaling expression.
+		 	 */
+			multiply (Left const& left, typename traits<Left>::type right) noexcept
+				: binary<multiply<Left>, Left const&, typename traits<Left>::type>(left, right)
+			{ }
+
+			/* Access the scaled scalar at the given index.
+		 	 */
+			inline
+			typename traits<Left>::type
+			operator () (size_t row, size_t column) const noexcept
+			{
+				ELA_ASSUME(row < traits<Left>::rows && column < traits<Left>::columns);
+
+				return this->_left(row, column) * this->_right;
+			}
+		};
+	}
 } }
 
 #endif

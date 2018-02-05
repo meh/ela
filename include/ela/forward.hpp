@@ -63,8 +63,19 @@ namespace ela {
 		template <typename Left, typename Right>
 		class multiply;
 
-		template <typename Input>
-		class scale;
+		namespace scalar {
+			template <typename Input>
+			class add;
+
+			template <typename Input>
+			class subtract;
+
+			template <typename Input>
+			class multiply;
+
+			template <typename Input>
+			class divide;
+		}
 
 		template <typename Input, bool Concrete = traits<Input>::concrete>
 		class transpose;
