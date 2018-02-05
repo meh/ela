@@ -66,24 +66,6 @@ namespace ela { namespace expression {
 				return scale<Self>(static_cast<Self const&>(*this), value);
 			}
 
-			/* Create a transpose expression.
-			 */
-			inline
-			transpose<Self, false>
-			operator ~ () const noexcept
-			{
-				return transpose<Self, false>(static_cast<Self const&>(*this));
-			}
-
-			/* Create a transpose expression.
-			 */
-			inline
-			transpose<Self, true>
-			operator ~ () noexcept
-			{
-				return transpose<Self, true>(static_cast<Self&>(*this));
-			}
-
 			/* Create an inversion expression.
 			 */
 			inline
@@ -389,6 +371,15 @@ namespace ela { namespace expression {
 					? static_cast<Self const&>(*this)(0, index)
 					: static_cast<Self const&>(*this)(index, 0);
 			}
+
+			/* Create a transpose expression.
+			 */
+			inline
+			transpose<Self, false>
+			operator ~ () const noexcept
+			{
+				return transpose<Self, false>(static_cast<Self const&>(*this));
+			}
 		};
 
 		template <typename Self>
@@ -450,6 +441,24 @@ namespace ela { namespace expression {
 				return (R == 1)
 					? static_cast<Self&>(*this)(0, index)
 					: static_cast<Self&>(*this)(index, 0);
+			}
+
+			/* Create a transpose expression.
+			 */
+			inline
+			transpose<Self, false>
+			operator ~ () const noexcept
+			{
+				return transpose<Self, false>(static_cast<Self const&>(*this));
+			}
+
+			/* Create a transpose expression.
+			 */
+			inline
+			transpose<Self, true>
+			operator ~ () noexcept
+			{
+				return transpose<Self, true>(static_cast<Self&>(*this));
 			}
 		};
 
