@@ -22,8 +22,8 @@
 #define ELA_STORAGE_POINTER_H
 
 namespace ela { namespace storage {
-	template <typename Order, typename Type, size_t Rows, size_t Columns>
-	class impl<specifier<pointer, Order>, Type, Rows, Columns>
+	template <typename Order, typename Type, size_t Size>
+	class impl<specifier<pointer, Order>, Type, Size>
 	{
 	public:
 		impl (Type* ptr) noexcept
@@ -34,22 +34,22 @@ namespace ela { namespace storage {
 		 */
 		inline
 		Type const&
-		operator () (size_t row, size_t column) const noexcept
+		operator [] (size_t index) const noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _ptr[Order::template index<Rows, Columns>(row, column)];
+			return _ptr[index];
 		}
 
 		/* Access a scalar at the given row and column.
 		 */
 		inline
 		Type&
-		operator () (size_t row, size_t column) noexcept
+		operator [] (size_t index) noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _ptr[Order::template index<Rows, Columns>(row, column)];
+			return _ptr[index];
 		}
 
 		/* Return the wrapped raw pointer.

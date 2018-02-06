@@ -22,8 +22,8 @@
 #define ELA_STORAGE_ALLOCATOR_H
 
 namespace ela { namespace storage {
-	template <typename Order, template <typename> class Allocator, typename Type, size_t Rows, size_t Columns>
-	class impl<specifier<allocator<Allocator>, Order>, Type, Rows, Columns>
+	template <typename Order, template <typename> class Allocator, typename Type, size_t Size>
+	class impl<specifier<allocator<Allocator>, Order>, Type, Size>
 	{
 	public:
 		typedef Allocator<Type> allocator_type;
@@ -33,22 +33,22 @@ namespace ela { namespace storage {
 			: _alloc(alloc)
 		{
 			_valid  = true;
-			_buffer = _alloc.allocate(Rows * Columns);
+			_buffer = _alloc.allocate(Size);
 		}
 
 		impl (Type value, Allocator<Type> const& alloc = Allocator<Type>()) noexcept
 			: impl(alloc)
 		{
-			std::fill_n(_buffer, Rows * Columns, value);
+			std::fill_n(_buffer, Size, value);
 		}
 
-		impl (impl<specifier<allocator<Allocator>, Order>, Type, Rows, Columns> const& from) noexcept
+		impl (impl<specifier<allocator<Allocator>, Order>, Type, Size> const& from) noexcept
 			: impl(from._alloc)
 		{
-			std::copy_n(from._buffer, Rows * Columns, _buffer);
+			std::copy_n(from._buffer, Size, _buffer);
 		}
 
-		impl (impl<specifier<allocator<Allocator>, Order>, Type, Rows, Columns>&& from) noexcept
+		impl (impl<specifier<allocator<Allocator>, Order>, Type, Size>&& from) noexcept
 			: _alloc(from._alloc), _buffer(from._buffer)
 		{
 			from._valid = false;
@@ -57,7 +57,7 @@ namespace ela { namespace storage {
 		~impl () noexcept
 		{
 			if (_valid) {
-				_alloc.deallocate(_buffer, Rows * Columns);
+				_alloc.deallocate(_buffer, Size);
 			}
 		}
 
@@ -65,22 +65,22 @@ namespace ela { namespace storage {
 		 */
 		inline
 		Type const&
-		operator () (size_t row, size_t column) const noexcept
+		operator [] (size_t index) const noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _buffer[Order::template index<Rows, Columns>(row, column)];
+			return _buffer[index];
 		}
 
 		/* Access a scalar at the given row and column.
 		 */
 		inline
 		Type&
-		operator () (size_t row, size_t column) noexcept
+		operator [] (size_t index) noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _buffer[Order::template index<Rows, Columns>(row, column)];
+			return _buffer[index];
 		}
 
 	private:

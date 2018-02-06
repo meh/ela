@@ -18,17 +18,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef ELA_STORAGE_DUCK_H
+#define ELA_STORAGE_DUCK_H
+
 namespace ela { namespace storage {
-	template <typename Impl, typename Order>
-	struct specifier
+	template <typename Order, typename Duck, typename Type, size_t Size>
+	class impl<specifier<duck<Duck>, Order>, Type, Size>
 	{
-		typedef Impl impl;
-		typedef Order order;
+	public:
+		impl (Duck duck) noexcept
+			: _duck(duck)
+		{ }
+
+		/* Access a scalar at the given row and column.
+		 */
+		inline
+		Type const&
+		operator [] (size_t index) const noexcept
+		{
+			ELA_ASSUME(index < Size);
+
+			return _duck[index];
+		}
+
+		/* Access a scalar at the given row and column.
+		 */
+		inline
+		Type&
+		operator [] (size_t index) noexcept
+		{
+			ELA_ASSUME(index < Size);
+
+			return _duck[index];
+		}
+
+	private:
+		Duck _duck;
 	};
 } }
 
-#include "storage/pointer.hpp"
-#include "storage/stack.hpp"
-#include "storage/heap.hpp"
-#include "storage/allocator.hpp"
-#include "storage/duck.hpp"
+#endif

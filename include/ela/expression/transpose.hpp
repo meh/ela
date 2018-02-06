@@ -22,19 +22,19 @@
 #define ELA_EXPRESSION_TRANSPOSE_H
 
 namespace ela { namespace expression {
-	template <typename Input, bool Concrete>
+	template <typename Input, typename Concrete>
 	struct traits<transpose<Input, Concrete>>
 	{
 		typedef typename traits<Input>::type type;
 		static constexpr size_t rows = traits<Input>::columns;
 		static constexpr size_t columns = traits<Input>::rows;
-		static constexpr bool concrete = Concrete;
+		static constexpr bool concrete = Concrete::value;
 	};
 
 	/* Transposition expression, swaps rows with columns.
 	 */
 	template <typename Input>
-	class transpose<Input, false>: public unary<transpose<Input>, Input const&>
+	class transpose<Input, marker::concrete<false>>: public unary<transpose<Input>, Input const&>
 	{
 	public:
 		/* Create a new transposition expression.
@@ -58,7 +58,7 @@ namespace ela { namespace expression {
 	/* Transposition expression, swaps rows with columns.
 	 */
 	template <typename Input>
-	class transpose<Input, true>: public unary<transpose<Input>, Input&>
+	class transpose<Input, marker::concrete<true>>: public unary<transpose<Input>, Input&>
 	{
 	public:
 		/* Create a new transposition expression.

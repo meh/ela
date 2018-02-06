@@ -91,7 +91,7 @@ namespace ela {
 	};
 
 	template <typename Input, typename Accessor>
-	class vector<Input, Accessor, false>: public expression::base<vector<Input, Accessor>>
+	class vector<Input, Accessor, marker::concrete<false>>: public expression::base<vector<Input, Accessor>>
 	{
 	public:
 		/* Create a new constant vector view.
@@ -116,7 +116,7 @@ namespace ela {
 	};
 
 	template <typename Input, typename Accessor>
-	class vector<Input, Accessor, true>: public expression::base<vector<Input, Accessor>>
+	class vector<Input, Accessor, marker::concrete<true>>: public expression::base<vector<Input, Accessor>>
 	{
 	public:
 		using expression::base<vector<Input, Accessor>>::operator =;

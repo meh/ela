@@ -23,13 +23,13 @@
 
 namespace ela { namespace iterator {
 	template <typename Expr>
-	class columns<Expr, false>
+	class columns<Expr, marker::concrete<false>>
 	{
 	public:
 		typedef std::ptrdiff_t difference_type;
-		typedef vector<Expr, for_column<Expr>, false> value_type;
-		typedef vector<Expr, for_column<Expr>, false> pointer;
-		typedef vector<Expr, for_column<Expr>, false> reference;
+		typedef vector<Expr, for_column<Expr>, marker::concrete<false>> value_type;
+		typedef vector<Expr, for_column<Expr>, marker::concrete<false>> pointer;
+		typedef vector<Expr, for_column<Expr>, marker::concrete<false>> reference;
 		typedef std::random_access_iterator_tag iterator_category;
 
 	protected:
@@ -39,14 +39,14 @@ namespace ela { namespace iterator {
 
 	public:
 		static inline
-		columns<Expr, false>
+		columns<Expr, marker::concrete<false>>
 		begin (Expr const& expr) noexcept
 		{
 			return columns(expr, 0);
 		}
 
 		static inline
-		columns<Expr, false>
+		columns<Expr, marker::concrete<false>>
 		end (Expr const& expr) noexcept
 		{
 			return columns(expr, expression::traits<Expr>::columns);
@@ -62,7 +62,7 @@ namespace ela { namespace iterator {
 
 		inline
 		bool
-		operator != (columns<Expr, false> const& other)
+		operator != (columns<Expr, marker::concrete<false>> const& other)
 		{
 			return _index != other._index;
 		}
@@ -73,13 +73,13 @@ namespace ela { namespace iterator {
 	};
 
 	template <typename Expr>
-	class columns<Expr, true>
+	class columns<Expr, marker::concrete<true>>
 	{
 	public:
 		typedef std::ptrdiff_t difference_type;
-		typedef vector<Expr, for_column<Expr>, true> value_type;
-		typedef vector<Expr, for_column<Expr>, true> pointer;
-		typedef vector<Expr, for_column<Expr>, true> reference;
+		typedef vector<Expr, for_column<Expr>, marker::concrete<true>> value_type;
+		typedef vector<Expr, for_column<Expr>, marker::concrete<true>> pointer;
+		typedef vector<Expr, for_column<Expr>, marker::concrete<true>> reference;
 		typedef std::random_access_iterator_tag iterator_category;
 
 	protected:
@@ -89,14 +89,14 @@ namespace ela { namespace iterator {
 
 	public:
 		static inline
-		columns<Expr, true>
+		columns<Expr, marker::concrete<true>>
 		begin (Expr& expr) noexcept
 		{
 			return columns(expr, 0);
 		}
 
 		static inline
-		columns<Expr, true>
+		columns<Expr, marker::concrete<true>>
 		end (Expr& expr) noexcept
 		{
 			return columns(expr, expression::traits<Expr>::columns);
@@ -112,7 +112,7 @@ namespace ela { namespace iterator {
 		}
 
 		inline
-		columns<Expr, true>&
+		columns<Expr, marker::concrete<true>>&
 		operator ++ () noexcept
 		{
 			_index++;
@@ -121,7 +121,7 @@ namespace ela { namespace iterator {
 
 		inline
 		bool
-		operator != (columns<Expr, true> const& other) noexcept
+		operator != (columns<Expr, marker::concrete<true>> const& other) noexcept
 		{
 			return _index != other._index;
 		}

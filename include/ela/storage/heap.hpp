@@ -22,22 +22,22 @@
 #define ELA_STORAGE_HEAP_H
 
 namespace ela { namespace storage {
-	template <typename Order, typename Type, size_t Rows, size_t Columns>
-	class impl<specifier<heap, Order>, Type, Rows, Columns>
+	template <typename Order, typename Type, size_t Size>
+	class impl<specifier<heap, Order>, Type, Size>
 	{
 	public:
 		impl () noexcept
 		{
-			_buffer = new Type[Rows * Columns]();
+			_buffer = new Type[Size]();
 		}
 
-		impl (impl<specifier<heap, Order>, Type, Rows, Columns> const& from) noexcept
+		impl (impl<specifier<heap, Order>, Type, Size> const& from) noexcept
 			: impl()
 		{
-			std::copy_n(from._buffer, Rows * Columns, _buffer);
+			std::copy_n(from._buffer, Size, _buffer);
 		}
 
-		impl (impl<specifier<heap, Order>, Type, Rows, Columns>&& from) noexcept
+		impl (impl<specifier<heap, Order>, Type, Size>&& from) noexcept
 		{
 			_buffer = from._buffer;
 			from._buffer = nullptr;
@@ -46,7 +46,7 @@ namespace ela { namespace storage {
 		impl (Type value) noexcept
 			: impl()
 		{
-			std::fill_n(_buffer, Rows * Columns, value);
+			std::fill_n(_buffer, Size, value);
 		}
 
 		~impl () noexcept
@@ -60,22 +60,22 @@ namespace ela { namespace storage {
 		 */
 		inline
 		Type const&
-		operator () (size_t row, size_t column) const noexcept
+		operator [] (size_t index) const noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _buffer[Order::template index<Rows, Columns>(row, column)];
+			return _buffer[index];
 		}
 
 		/* Access a scalar at the given row and column.
 		 */
 		inline
 		Type&
-		operator () (size_t row, size_t column) noexcept
+		operator [] (size_t index) noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _buffer[Order::template index<Rows, Columns>(row, column)];
+			return _buffer[index];
 		}
 
 		/* Return the raw pointer to the heap buffer.

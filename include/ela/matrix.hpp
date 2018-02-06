@@ -23,8 +23,8 @@
 
 namespace ela {
 	namespace expression {
-		template <typename Type, size_t Rows, size_t Columns, typename Storage>
-		struct traits<matrix<Type, Rows, Columns, Storage>>
+		template <typename Type, size_t Rows, size_t Columns, typename Storage, typename Owned>
+		struct traits<matrix<Type, Rows, Columns, Storage, Owned>>
 		{
 			typedef Type type;
 			static constexpr size_t rows = Rows;
@@ -36,8 +36,8 @@ namespace ela {
 	/* A matrix.
 	 */
 	template <typename Type, size_t Rows, size_t Columns, typename Storage>
-	class matrix<Type, Rows, Columns, Storage, false>
-		: public expression::base<matrix<Type, Rows, Columns, Storage, false>>
+	class matrix<Type, Rows, Columns, Storage, marker::owned<false>>
+		: public expression::base<matrix<Type, Rows, Columns, Storage, marker::owned<false>>>
 	{
 	public:
 		using expression::base<matrix<Type, Rows, Columns, Storage>>::operator =;
@@ -54,7 +54,7 @@ namespace ela {
 		Type const&
 		operator () (size_t row, size_t column) const noexcept
 		{
-			return _storage(row, column);
+			return _storage[Storage::order::template index<Rows, Columns>(row, column)];
 		}
 
 		/* Access a scalar at the given row and column.
@@ -63,28 +63,23 @@ namespace ela {
 		Type&
 		operator () (size_t row, size_t column) noexcept
 		{
-			return _storage(row, column);
+			return _storage[Storage::order::template index<Rows, Columns>(row, column)];
 		}
 
 		inline
-		operator Type* (void) noexcept
-		{
-			return _storage;
-		}
-
-		inline
-		operator Type const* (void) const noexcept
+		storage::impl<Storage, Type, Rows * Columns>&
+		storage (void) noexcept
 		{
 			return _storage;
 		}
 
 	private:
-		storage::impl<Storage, Type, Rows, Columns> _storage;
+		storage::impl<Storage, Type, Rows * Columns> _storage;
 	};
 
 	template <typename Type, size_t Rows, size_t Columns, typename Storage>
-	class matrix<Type, Rows, Columns, Storage, true>
-		: public expression::base<matrix<Type, Rows, Columns, Storage, true>>
+	class matrix<Type, Rows, Columns, Storage, marker::owned<true>>
+		: public expression::base<matrix<Type, Rows, Columns, Storage, marker::owned<true>>>
 	{
 	public:
 		using expression::base<matrix<Type, Rows, Columns, Storage>>::operator =;
@@ -118,6 +113,7 @@ namespace ela {
 			expression::base<matrix<Type, Rows, Columns, Storage>>::operator=(elements);
 		}
 
+	public:
 		/* Create an identity matrix with the given value.
 		 */
 		template <size_t R = Rows, size_t C = Columns>
@@ -166,13 +162,14 @@ namespace ela {
 			return result;
 		}
 
+	public:
 		/* Access a scalar at the given row and column.
 		 */
 		inline
 		Type const&
 		operator () (size_t row, size_t column) const noexcept
 		{
-			return _storage(row, column);
+			return _storage[Storage::order::template index<Rows, Columns>(row, column)];
 		}
 
 		/* Access a scalar at the given row and column.
@@ -181,38 +178,31 @@ namespace ela {
 		Type&
 		operator () (size_t row, size_t column) noexcept
 		{
-			return _storage(row, column);
+			return _storage[Storage::order::template index<Rows, Columns>(row, column)];
 		}
 
 		inline
-		operator Type* (void) noexcept
-		{
-			return _storage;
-		}
-
-		inline
-		operator Type const* (void) const noexcept
+		storage::impl<Storage, Type, Rows * Columns>&
+		storage (void) noexcept
 		{
 			return _storage;
 		}
 
 	private:
-		storage::impl<Storage, Type, Rows, Columns> _storage;
+		storage::impl<Storage, Type, Rows * Columns> _storage;
 	};
 
 	/* A column vector.
 	 */
 	template <typename Type, size_t Rows,
-	typename Storage = storage::specifier<storage::stack, order::row_major>,
-	bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, 1>>::value>
-	using column_vector = matrix<Type, Rows, 1, Storage, Owned>;
+	typename Storage = storage::specifier<storage::stack, order::row_major>>
+	using column_vector = matrix<Type, Rows, 1, Storage>;
 
 	/* A row vector.
 	 */
 	template <typename Type, size_t Columns,
-	typename Storage = storage::specifier<storage::stack, order::row_major>,
-	bool Owned = std::is_default_constructible<storage::impl<Storage, Type, 1, Columns>>::value>
-	using row_vector = matrix<Type, 1, Columns>;
+	typename Storage = storage::specifier<storage::stack, order::row_major>>
+	using row_vector = matrix<Type, 1, Columns, Storage>;
 }
 
 #endif

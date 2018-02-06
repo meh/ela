@@ -22,8 +22,8 @@
 #define ELA_STORAGE_STACK_H
 
 namespace ela { namespace storage {
-	template <typename Order, typename Type, size_t Rows, size_t Columns>
-	class impl<specifier<stack, Order>, Type, Rows, Columns>
+	template <typename Order, typename Type, size_t Size>
+	class impl<specifier<stack, Order>, Type, Size>
 	{
 	public:
 		impl () noexcept
@@ -32,47 +32,29 @@ namespace ela { namespace storage {
 		impl (Type value) noexcept
 			: impl()
 		{
-			std::fill_n(_buffer, Rows * Columns, value);
+			std::fill_n(_buffer, Size, value);
 		}
 
 		/* Access a scalar at the given row and column.
 		 */
 		inline
 		Type const&
-		operator () (size_t row, size_t column) const noexcept
+		operator [] (size_t index) const noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _buffer[Order::template index<Rows, Columns>(row, column)];
+			return _buffer[index];
 		}
 
 		/* Access a scalar at the given row and column.
 		 */
 		inline
 		Type&
-		operator () (size_t row, size_t column) noexcept
+		operator [] (size_t index) noexcept
 		{
-			ELA_ASSUME(row < Rows && column < Columns);
+			ELA_ASSUME(index < Size);
 
-			return _buffer[Order::template index<Rows, Columns>(row, column)];
-		}
-
-		/* Return the raw pointer to the stack buffer.
-		 */
-		inline
-		Type*
-		operator & (void) noexcept
-		{
-			return _buffer;
-		}
-
-		/* Return the constant raw pointer to the stack buffer.
-		 */
-		inline
-		Type const*
-		operator & (void) const noexcept
-		{
-			return _buffer;
+			return _buffer[index];
 		}
 
 		inline
@@ -88,7 +70,7 @@ namespace ela { namespace storage {
 		}
 
 	private:
-		Type _buffer[Rows * Columns] = {0};
+		Type _buffer[Size] = {0};
 	};
 } }
 

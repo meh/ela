@@ -23,13 +23,13 @@
 
 namespace ela { namespace iterator {
 	template <typename Expr>
-	class rows<Expr, false>
+	class rows<Expr, marker::concrete<false>>
 	{
 	public:
 		typedef std::ptrdiff_t difference_type;
-		typedef vector<Expr, for_row<Expr>, false> value_type;
-		typedef vector<Expr, for_row<Expr>, false> pointer;
-		typedef vector<Expr, for_row<Expr>, false> reference;
+		typedef vector<Expr, for_row<Expr>, marker::concrete<false>> value_type;
+		typedef vector<Expr, for_row<Expr>, marker::concrete<false>> pointer;
+		typedef vector<Expr, for_row<Expr>, marker::concrete<false>> reference;
 		typedef std::random_access_iterator_tag iterator_category;
 
 	protected:
@@ -39,14 +39,14 @@ namespace ela { namespace iterator {
 
 	public:
 		static inline
-		rows<Expr, false>
+		rows<Expr, marker::concrete<false>>
 		begin (Expr const& expr) noexcept
 		{
 			return rows(expr, 0);
 		}
 
 		static inline
-		rows<Expr, false>
+		rows<Expr, marker::concrete<false>>
 		end (Expr const& expr) noexcept
 		{
 			return rows(expr, expression::traits<Expr>::rows);
@@ -62,7 +62,7 @@ namespace ela { namespace iterator {
 
 		inline
 		bool
-		operator != (rows<Expr, false> const& other)
+		operator != (rows<Expr, marker::concrete<false>> const& other)
 		{
 			return _index != other._index;
 		}
@@ -73,13 +73,13 @@ namespace ela { namespace iterator {
 	};
 
 	template <typename Expr>
-	class rows<Expr, true>
+	class rows<Expr, marker::concrete<true>>
 	{
 	public:
 		typedef std::ptrdiff_t difference_type;
-		typedef vector<Expr, for_row<Expr>, true> value_type;
-		typedef vector<Expr, for_row<Expr>, true> pointer;
-		typedef vector<Expr, for_row<Expr>, true> reference;
+		typedef vector<Expr, for_row<Expr>, marker::concrete<true>> value_type;
+		typedef vector<Expr, for_row<Expr>, marker::concrete<true>> pointer;
+		typedef vector<Expr, for_row<Expr>, marker::concrete<true>> reference;
 		typedef std::random_access_iterator_tag iterator_category;
 
 	protected:
@@ -89,14 +89,14 @@ namespace ela { namespace iterator {
 
 	public:
 		static inline
-		rows<Expr, true>
+		rows<Expr, marker::concrete<true>>
 		begin (Expr& expr) noexcept
 		{
 			return rows(expr, 0);
 		}
 
 		static inline
-		rows<Expr, true>
+		rows<Expr, marker::concrete<true>>
 		end (Expr& expr) noexcept
 		{
 			return rows(expr, expression::traits<Expr>::rows);
@@ -112,7 +112,7 @@ namespace ela { namespace iterator {
 		}
 
 		inline
-		rows<Expr, true>&
+		rows<Expr, marker::concrete<true>>&
 		operator ++ () noexcept
 		{
 			_index++;
@@ -121,7 +121,7 @@ namespace ela { namespace iterator {
 
 		inline
 		bool
-		operator != (rows<Expr, true> const& other) noexcept
+		operator != (rows<Expr, marker::concrete<true>> const& other) noexcept
 		{
 			return _index != other._index;
 		}

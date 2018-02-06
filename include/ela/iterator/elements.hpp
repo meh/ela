@@ -23,7 +23,7 @@
 
 namespace ela { namespace iterator {
 	template <typename Expr, typename Order>
-	class elements<Expr, Order, false>
+	class elements<Expr, Order, marker::concrete<false>>
 	{
 	public:
 		typedef std::ptrdiff_t difference_type;
@@ -39,14 +39,14 @@ namespace ela { namespace iterator {
 
 	public:
 		static inline
-		elements<Expr, Order, false>
+		elements<Expr, Order, marker::concrete<false>>
 		begin (Expr const& expr) noexcept
 		{
 			return elements(expr, 0);
 		}
 
 		static inline
-		elements<Expr, Order, false>
+		elements<Expr, Order, marker::concrete<false>>
 		end (Expr const& expr) noexcept
 		{
 			return elements(expr, expression::traits<Expr>::rows * expression::traits<Expr>::columns);
@@ -76,7 +76,7 @@ namespace ela { namespace iterator {
 		}
 
 		inline
-		elements<Expr, Order, false>&
+		elements<Expr, Order, marker::concrete<false>>&
 		operator ++ ()
 		{
 			_index++;
@@ -84,15 +84,15 @@ namespace ela { namespace iterator {
 		}
 
 		inline
-		elements<Expr, Order, false>
+		elements<Expr, Order, marker::concrete<false>>
 		operator ++ (int)
 		{
-			elements<Expr, Order, false> tmp(*this);
+			elements<Expr, Order, marker::concrete<false>> tmp(*this);
 			_index++;
 			return tmp;
 		}
 
-		template <bool Concrete>
+		template <typename Concrete>
 		inline
 		bool
 		operator == (elements<Expr, Order, Concrete> const& other) const
@@ -100,7 +100,7 @@ namespace ela { namespace iterator {
 			return _index == other._index;
 		}
 
-		template <bool Concrete>
+		template <typename Concrete>
 		inline
 		bool
 		operator != (elements<Expr, Order, Concrete> const& other) const
@@ -114,7 +114,7 @@ namespace ela { namespace iterator {
 	};
 
 	template <typename Expr, typename Order>
-	class elements<Expr, Order, true>
+	class elements<Expr, Order, marker::concrete<true>>
 	{
 	public:
 		typedef std::ptrdiff_t difference_type;
@@ -130,14 +130,14 @@ namespace ela { namespace iterator {
 
 	public:
 		static inline
-		elements<Expr, Order, true>
+		elements<Expr, Order, marker::concrete<true>>
 		begin (Expr& expr) noexcept
 		{
 			return elements(expr, 0);
 		}
 
 		static inline
-		elements<Expr, Order, true>
+		elements<Expr, Order, marker::concrete<true>>
 		end (Expr& expr) noexcept
 		{
 			return elements(expr, expression::traits<Expr>::rows * expression::traits<Expr>::columns);
@@ -168,7 +168,7 @@ namespace ela { namespace iterator {
 		}
 
 		inline
-		elements<Expr, Order, true>&
+		elements<Expr, Order, marker::concrete<true>>&
 		operator ++ ()
 		{
 			_index++;
@@ -176,15 +176,15 @@ namespace ela { namespace iterator {
 		}
 
 		inline
-		elements<Expr, Order, true>
+		elements<Expr, Order, marker::concrete<true>>
 		operator ++ (int)
 		{
-			elements<Expr, Order, true> tmp(*this);
+			elements<Expr, Order, marker::concrete<true>> tmp(*this);
 			_index++;
 			return tmp;
 		}
 
-		template <bool Concrete>
+		template <typename Concrete>
 		inline
 		bool
 		operator == (elements<Expr, Order, Concrete> const& other) const
@@ -192,7 +192,7 @@ namespace ela { namespace iterator {
 			return _index == other._index;
 		}
 
-		template <bool Concrete>
+		template <typename Concrete>
 		inline
 		bool
 		operator != (elements<Expr, Order, Concrete> const& other) const

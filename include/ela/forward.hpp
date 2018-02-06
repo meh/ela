@@ -24,27 +24,37 @@ namespace ela {
 		struct column_major;
 	}
 
+	namespace marker {
+		template <bool Value>
+		struct concrete : public std::integral_constant<bool, Value>
+		{ };
+
+		template <bool Value>
+		struct owned : public std::integral_constant<bool, Value>
+		{ };
+	}
+
 	namespace expression {
 		template <typename Expr>
 		struct traits;
 
-		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
+		template <typename Self, typename Concrete = marker::concrete<expression::traits<Self>::concrete>>
 		struct base;
 
 		namespace derive {
 			template <typename Self>
 			struct operators;
 
-			template <typename Self, bool Concrete = traits<Self>::concrete>
+			template <typename Self, typename Concrete = marker::concrete<traits<Self>::concrete>>
 			struct vectors;
 
-			template <typename Self, bool Concrete = traits<Self>::concrete>
+			template <typename Self, typename Concrete = marker::concrete<traits<Self>::concrete>>
 			struct iterators;
 
-			template <typename Self, bool Concrete = traits<Self>::concrete>
+			template <typename Self, typename Concrete = marker::concrete<traits<Self>::concrete>>
 			struct accessors;
 
-			template <typename Self, bool Concrete = traits<Self>::concrete>
+			template <typename Self, typename Concrete = marker::concrete<traits<Self>::concrete>>
 			struct assignment;
 		}
 
@@ -71,7 +81,7 @@ namespace ela {
 			class divide;
 		}
 
-		template <typename Input, bool Concrete = traits<Input>::concrete>
+		template <typename Self, typename Concrete = marker::concrete<traits<Self>::concrete>>
 		class transpose;
 
 		template <typename Input, size_t Dimension>
@@ -88,19 +98,25 @@ namespace ela {
 		template <typename Expr, typename Iterator, typename ConstIterator = Iterator>
 		class wrapper;
 
-		template <typename Self, typename Order = order::row_major, bool Concrete = expression::traits<Self>::concrete>
+		template <typename Self, typename Order = order::row_major, typename Concrete = marker::concrete<expression::traits<Self>::concrete>>
 		class elements;
 
-		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
+		template <typename Self, typename Concrete = marker::concrete<expression::traits<Self>::concrete>>
 		class rows;
 
-		template <typename Self, bool Concrete = expression::traits<Self>::concrete>
+		template <typename Self, typename Concrete = marker::concrete<expression::traits<Self>::concrete>>
 		class columns;
 	}
 
 	namespace storage {
 		using row_major = order::row_major;
 		using column_major = order::row_major;
+
+		template <typename Impl, typename Order = order::row_major>
+		struct specifier;
+
+		template <typename Specifier, typename Type, size_t Size>
+		class impl;
 
 		struct pointer;
 		struct stack;
@@ -109,16 +125,13 @@ namespace ela {
 		template <template <typename> class Allocator = std::allocator>
 		struct allocator;
 
-		template <typename Impl, typename Order = order::row_major>
-		struct specifier;
-
-		template <typename Specifier, typename Type, size_t Rows, size_t Columns>
-		class impl;
+		template <typename Duck>
+		struct duck;
 	}
 
 	template <typename Type, size_t Rows, size_t Columns = Rows,
 		typename Storage = storage::specifier<storage::stack, order::row_major>,
-		bool Owned = std::is_default_constructible<storage::impl<Storage, Type, Rows, Columns>>::value>
+		typename Owned = marker::owned<std::is_default_constructible<storage::impl<Storage, Type, Rows * Columns>>::value>>
 	class matrix;
 
 	template <typename Input>
@@ -127,6 +140,6 @@ namespace ela {
 	template <typename Input>
 	class for_row;
 
-	template <typename Expr, typename Accessor, bool Concrete = expression::traits<Expr>::concrete>
+	template <typename Expr, typename Accessor, typename Concrete = marker::concrete<expression::traits<Expr>::concrete>>
 	class vector;
 }

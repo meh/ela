@@ -140,30 +140,30 @@ namespace ela { namespace expression {
 		};
 
 		template <typename Self>
-		struct vectors<Self, false>
+		struct vectors<Self, marker::concrete<false>>
 		{
 			/* Access the column vector at the given index with compile-time bound
 			 * checking.
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_column<Self>, false>
+			vector<Self, for_column<Self>, marker::concrete<false>>
 			column () const noexcept
 			{
 				static_assert(Index < traits<Self>::columns,
 					"index out of bounds");
 
-				return vector<Self, for_column<Self>, false>(
+				return vector<Self, for_column<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), Index);
 			}
 
 			/* Access the column vector at the given index.
 			 */
 			inline
-			vector<Self, for_column<Self>, false>
+			vector<Self, for_column<Self>, marker::concrete<false>>
 			column (size_t index) const noexcept
 			{
-				return vector<Self, for_column<Self>, false>(
+				return vector<Self, for_column<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), index);
 			}
 
@@ -172,52 +172,52 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_row<Self>>
+			vector<Self, for_row<Self>, marker::concrete<false>>
 			row () const noexcept
 			{
 				static_assert(Index < traits<Self>::rows,
 					"index out of bounds");
 
-				return vector<Self, for_row<Self>, false>(
+				return vector<Self, for_row<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), Index);
 			}
 
 			/* Access the row vector at the given index.
 			 */
 			inline
-			vector<Self, for_row<Self>>
+			vector<Self, for_row<Self>, marker::concrete<false>>
 			row (size_t index) const noexcept
 			{
-				return vector<Self, for_row<Self>, false>(
+				return vector<Self, for_row<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), index);
 			}
 		};
 
 		template <typename Self>
-		struct vectors<Self, true>
+		struct vectors<Self, marker::concrete<true>>
 		{
 			/* Access the column vector at the given index with compile-time bound
 			 * checking.
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_column<Self>, false>
+			vector<Self, for_column<Self>, marker::concrete<false>>
 			column () const noexcept
 			{
 				static_assert(Index < traits<Self>::columns,
 					"index out of bounds");
 
-				return vector<Self, for_column<Self>, false>(
+				return vector<Self, for_column<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), Index);
 			}
 
 			/* Access the column vector at the given index.
 			 */
 			inline
-			vector<Self, for_column<Self>, false>
+			vector<Self, for_column<Self>, marker::concrete<false>>
 			column (size_t index) const noexcept
 			{
-				return vector<Self, for_column<Self>, false>(
+				return vector<Self, for_column<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), index);
 			}
 
@@ -226,23 +226,23 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_column<Self>, true>
+			vector<Self, for_column<Self>, marker::concrete<true>>
 			column () noexcept
 			{
 				static_assert(Index < traits<Self>::columns,
 					"index out of bounds");
 
-				return vector<Self, for_column<Self>, true>(
+				return vector<Self, for_column<Self>, marker::concrete<true>>(
 					static_cast<Self&>(*this), Index);
 			}
 
 			/* Access the column vector at the given index.
 			 */
 			inline
-			vector<Self, for_column<Self>, true>
+			vector<Self, for_column<Self>, marker::concrete<true>>
 			column (size_t index) noexcept
 			{
-				return vector<Self, for_column<Self>, true>(
+				return vector<Self, for_column<Self>, marker::concrete<true>>(
 					static_cast<Self&>(*this), index);
 			}
 
@@ -251,23 +251,23 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_row<Self>>
+			vector<Self, for_row<Self>, marker::concrete<false>>
 			row () const noexcept
 			{
 				static_assert(Index < traits<Self>::rows,
 					"index out of bounds");
 
-				return vector<Self, for_row<Self>, false>(
+				return vector<Self, for_row<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), Index);
 			}
 
 			/* Access the row vector at the given index.
 			 */
 			inline
-			vector<Self, for_row<Self>>
+			vector<Self, for_row<Self>, marker::concrete<false>>
 			row (size_t index) const noexcept
 			{
-				return vector<Self, for_row<Self>, false>(
+				return vector<Self, for_row<Self>, marker::concrete<false>>(
 					static_cast<Self const&>(*this), index);
 			}
 
@@ -276,47 +276,47 @@ namespace ela { namespace expression {
 			 */
 			template <size_t Index>
 			inline
-			vector<Self, for_row<Self>, true>
+			vector<Self, for_row<Self>, marker::concrete<true>>
 			row () noexcept
 			{
 				static_assert(Index < traits<Self>::rows,
 					"index out of bounds");
 
-				return vector<Self, for_row<Self>, true>(
+				return vector<Self, for_row<Self>, marker::concrete<true>>(
 					static_cast<Self&>(*this), Index);
 			}
 
 			/* Access the row vector at the given index.
 			 */
 			inline
-			vector<Self, for_row<Self>, true>
+			vector<Self, for_row<Self>, marker::concrete<true>>
 			row (size_t index) noexcept
 			{
-				return vector<Self, for_row<Self>, true>(
+				return vector<Self, for_row<Self>, marker::concrete<true>>(
 					static_cast<Self&>(*this), index);
 			}
 		};
 
 		template <typename Self>
-		struct iterators<Self, false>
+		struct iterators<Self, marker::concrete<false>>
 		{
 			template <typename Order = order::row_major>
 			inline
-			iterator::wrapper<Self, iterator::elements<Self, Order, false>>
+			iterator::wrapper<Self, iterator::elements<Self, Order, marker::concrete<false>>>
 			elements () const noexcept
 			{
 				return static_cast<Self const&>(*this);
 			}
 
 			inline
-			iterator::wrapper<Self, iterator::rows<Self, false>>
+			iterator::wrapper<Self, iterator::rows<Self, marker::concrete<false>>>
 			rows () const noexcept
 			{
 				return static_cast<Self const&>(*this);
 			}
 
 			inline
-			iterator::wrapper<Self, iterator::columns<Self, false>>
+			iterator::wrapper<Self, iterator::columns<Self, marker::concrete<false>>>
 			columns () const noexcept
 			{
 				return static_cast<Self const&>(*this);
@@ -324,11 +324,11 @@ namespace ela { namespace expression {
 		};
 
 		template <typename Self>
-		struct iterators<Self, true>
+		struct iterators<Self, marker::concrete<true>>
 		{
 			template <typename Order = order::row_major>
 			inline
-			iterator::wrapper<Self, iterator::elements<Self, Order, false>>
+			iterator::wrapper<Self, iterator::elements<Self, Order, marker::concrete<false>>>
 			elements () const noexcept
 			{
 				return static_cast<Self const&>(*this);
@@ -336,35 +336,35 @@ namespace ela { namespace expression {
 
 			template <typename Order = order::row_major>
 			inline
-			iterator::wrapper<Self, iterator::elements<Self, Order, true>, iterator::elements<Self, Order, false>>
+			iterator::wrapper<Self, iterator::elements<Self, Order, marker::concrete<true>>, iterator::elements<Self, Order, marker::concrete<false>>>
 			elements () noexcept
 			{
 				return static_cast<Self&>(*this);
 			}
 
 			inline
-			iterator::wrapper<Self, iterator::rows<Self, false>>
+			iterator::wrapper<Self, iterator::rows<Self, marker::concrete<false>>>
 			rows () const noexcept
 			{
 				return static_cast<Self const&>(*this);
 			}
 
 			inline
-			iterator::wrapper<Self, iterator::rows<Self, true>, iterator::rows<Self, false>>
+			iterator::wrapper<Self, iterator::rows<Self, marker::concrete<true>>, iterator::rows<Self, marker::concrete<false>>>
 			rows () noexcept
 			{
 				return static_cast<Self&>(*this);
 			}
 
 			inline
-			iterator::wrapper<Self, iterator::columns<Self, false>>
+			iterator::wrapper<Self, iterator::columns<Self, marker::concrete<false>>>
 			columns () const noexcept
 			{
 				return static_cast<Self const&>(*this);
 			}
 
 			inline
-			iterator::wrapper<Self, iterator::columns<Self, true>, iterator::columns<Self, false>>
+			iterator::wrapper<Self, iterator::columns<Self, marker::concrete<true>>, iterator::columns<Self, marker::concrete<false>>>
 			columns () noexcept
 			{
 				return static_cast<Self&>(*this);
@@ -372,7 +372,7 @@ namespace ela { namespace expression {
 		};
 
 		template <typename Self>
-		struct accessors<Self, false>
+		struct accessors<Self, marker::concrete<false>>
 		{
 			/* Access a scalar at the given coordinates with compile-time bound
 			 * checking.
@@ -406,15 +406,15 @@ namespace ela { namespace expression {
 			/* Create a transpose expression.
 			 */
 			inline
-			transpose<Self, false>
+			transpose<Self, marker::concrete<false>>
 			operator ~ () const noexcept
 			{
-				return transpose<Self, false>(static_cast<Self const&>(*this));
+				return transpose<Self, marker::concrete<false>>(static_cast<Self const&>(*this));
 			}
 		};
 
 		template <typename Self>
-		struct accessors<Self, true>
+		struct accessors<Self, marker::concrete<true>>
 		{
 			/* Access a scalar at the given coordinates with compile-time bound
 			 * checking.
@@ -477,28 +477,28 @@ namespace ela { namespace expression {
 			/* Create a transpose expression.
 			 */
 			inline
-			transpose<Self, false>
+			transpose<Self, marker::concrete<false>>
 			operator ~ () const noexcept
 			{
-				return transpose<Self, false>(static_cast<Self const&>(*this));
+				return transpose<Self, marker::concrete<false>>(static_cast<Self const&>(*this));
 			}
 
 			/* Create a transpose expression.
 			 */
 			inline
-			transpose<Self, true>
+			transpose<Self, marker::concrete<true>>
 			operator ~ () noexcept
 			{
-				return transpose<Self, true>(static_cast<Self&>(*this));
+				return transpose<Self, marker::concrete<true>>(static_cast<Self&>(*this));
 			}
 		};
 
-		template <typename Self, bool Concrete>
+		template <typename Self, typename Concrete>
 		struct assignment
 		{ };
 
 		template <typename Self>
-		struct assignment<Self, true>
+		struct assignment<Self, marker::concrete<true>>
 		{
 			/* Copy the data from the initializer list.
 			 */
@@ -567,20 +567,20 @@ namespace ela { namespace expression {
 	 * expression-like types.
 	 */
 	template <typename Self>
-	struct base<Self, false> : public derive::operators<Self>,
-	                           public derive::vectors<Self>,
-	                           public derive::iterators<Self>,
-	                           public derive::accessors<Self>
+	struct base<Self, marker::concrete<false>> : public derive::operators<Self>,
+	                                             public derive::vectors<Self>,
+	                                             public derive::iterators<Self>,
+	                                             public derive::accessors<Self>
 	{ };
 
 	template <typename Self>
-	struct base<Self, true> : public derive::operators<Self>,
-	                          public derive::vectors<Self>,
-	                          public derive::iterators<Self>,
-	                          public derive::accessors<Self>,
-	                          public derive::assignment<Self>
+	struct base<Self, marker::concrete<true>> : public derive::operators<Self>,
+	                                            public derive::vectors<Self>,
+	                                            public derive::iterators<Self>,
+	                                            public derive::accessors<Self>,
+	                                            public derive::assignment<Self>
 	{
-		using derive::assignment<Self, true>::operator =;
+		using derive::assignment<Self, marker::concrete<true>>::operator =;
 	};
 
 	/* Unary expressions.
