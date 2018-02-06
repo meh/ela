@@ -411,6 +411,16 @@ namespace ela { namespace expression {
 			{
 				return transpose<Self, marker::concrete<false>>(static_cast<Self const&>(*this));
 			}
+
+//			/* Access the expression as an array.
+//			 */
+//			template <typename Order = order::row_major>
+//			inline
+//			ela::array<Self, expression::traits<Self>::rows, expression::traits<Self>::columns, Order, marker::concrete<false>>
+//			array () const noexcept
+//			{
+//				return ela::array<Self, expression::traits<Self>::rows, expression::traits<Self>::columns, Order, marker::concrete<false>>(static_cast<Self const&>(*this));
+//			}
 		};
 
 		template <typename Self>
@@ -491,6 +501,26 @@ namespace ela { namespace expression {
 			{
 				return transpose<Self, marker::concrete<true>>(static_cast<Self&>(*this));
 			}
+
+//			/* Access the expression as an array.
+//			 */
+//			template <typename Order = order::row_major>
+//			inline
+//			ela::array<Self, expression::traits<Self>::rows, expression::traits<Self>::columns, Order, marker::concrete<false>>
+//			array () const noexcept
+//			{
+//				return ela::array<Self, expression::traits<Self>::rows, expression::traits<Self>::columns, Order, marker::concrete<false>>(static_cast<Self const&>(*this));
+//			}
+
+//			/* Access the expression as an array.
+//			 */
+//			template <typename Order = order::row_major>
+//			inline
+//			ela::array<Self, expression::traits<Self>::rows, expression::traits<Self>::columns, Order, marker::concrete<true>>
+//			array () noexcept
+//			{
+//				return ela::array<Self, expression::traits<Self>::rows, expression::traits<Self>::columns, Order, marker::concrete<true>>(static_cast<Self&>(*this));
+//			}
 		};
 
 		template <typename Self, typename Concrete>
